@@ -9,10 +9,10 @@ load('Data/Input_UK_Data.RData')
 #load data for 2020 (updating periodically)
 
 #males
-males.deaths.update <- data.table(read_excel('Data/Update data/publishedweek192020.xlsx',sheet="Weekly figures 2020",range = 'B44:BC63',
+males.deaths.update <- data.table(read_excel('Data/Update data/publishedweek202020.xlsx',sheet="Weekly figures 2020",range = 'B44:BC63',
                                              col_names = F))
 males.deaths.update[,sex:='m']
-females.deaths.update <- data.table(read_excel('Data/Update data/publishedweek192020.xlsx',sheet="Weekly figures 2020",range = 'B66:BC85',
+females.deaths.update <- data.table(read_excel('Data/Update data/publishedweek202020.xlsx',sheet="Weekly figures 2020",range = 'B66:BC85',
                                                col_names = F))
 females.deaths.update[,sex:='f']
 
@@ -21,7 +21,7 @@ update.deaths <- update.deaths[, c(1,55,2:54)]
 names(update.deaths) <- c('agegroup','sex',1:53)
 update.deaths[,age:= c(0,1,seq(5,90,5)), by = list(sex)]
 
-update.deaths <- melt(update.deaths, id.vars = c('age','agegroup','sex'),variable.name = 'week',value.name = 'deaths',variable.factor = 'F',)
+update.deaths <- melt(update.deaths, id.vars = c('age','agegroup','sex'),variable.name = 'week',value.name = 'deaths',variable.factor = 'F')
 update.deaths[, week:=as.numeric(week)]
 
 #need to regroup to original age groups
@@ -112,8 +112,6 @@ Data.dt[,sex := as.factor(sex)]
 Data.dt[,mx := deaths/exposures]
 
 Data.dt[,week_ify := (time+26)%%52]
-
-Data.dt[,week := week - 1]
 
 #add month
 months <- c(unlist(lapply(0:12, function(x){rep(x,4)})))

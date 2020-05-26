@@ -32,7 +32,7 @@ m <- ggplot() +
   theme_minimal()+
   theme(panel.grid.minor = element_blank())+
   labs(
-    title = 'Sex ratio (log scale) of deaths (m/f) in England and Wales by age and year with tend of GAM and GLM',
+    title = 'Sex ratio (log scale) of deaths (m/f) in England and Wales by age and year with trend of GAM and GLM',
     y = 'log10(sex ratio)',
     x = 'Deaths per week',
     caption = 'Source data: ONS')
@@ -48,7 +48,7 @@ f <-   ggplot() +
   theme_minimal()+
   theme(panel.grid.minor = element_blank())+
   labs(
-    title = 'Sex ratio (log scale) of mx (m/f) in England and Wales by age and year with tend of GAM and GLM',
+    title = 'Sex ratio (log scale) of mx (m/f) in England and Wales by age and year with trend of GAM and GLM',
     y = 'log10(sex ratio)',
     x = 'Deaths per week',
     caption = 'Source data: ONS')

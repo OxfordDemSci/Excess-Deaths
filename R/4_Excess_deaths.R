@@ -43,9 +43,15 @@ excess.deaths.fun <- function(DT = .SD){
 
 results.2020 <- Deaths.2020[, excess.deaths.fun(DT = .SD), by = list(sex,age.n)]
 
+results.2020[,excess.dx := as.numeric(excess.dx)]
+results.2020[,excess.dx.prop := as.numeric(excess.dx.prop)]
+
 results.2020 <- results.2020[order(sex,model.n,age.n)]
 
 write.csv(results.2020, file = 'Dashboard/Data/Excess_Deaths.csv')
 
+results.2020[,3] <- round(results.2020[,3],0)
+results.2020[,4] <- round(results.2020[,4],1)
+results.2020
 
 
