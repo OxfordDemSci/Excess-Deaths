@@ -162,7 +162,7 @@ f <- ggplot() +
               aes(x = date, ymin = lower.CI, ymax = upper.CI, fill = model),alpha = 1/10) +
   geom_point(data = Deaths.UK[sex == 'f' & year >= y1 & model == 'observed'], aes(x = date, y = deaths), size = 0.8, col = 'black',alpha = 1/7) +
   geom_line(data = Deaths.UK[sex == 'f' & year >= y1 & model != 'observed'], aes(x = date, y = deaths, col = model))+
-  geom_line(data = Deaths.UK[sex == 'm' & year == 2020 & model == 'observed'], aes(x = date, y = deaths, col = '2020'))+
+  geom_line(data = Deaths.UK[sex == 'f' & year == 2020 & model == 'observed'], aes(x = date, y = deaths, col = '2020'))+
   facet_wrap(~ age.n, scales = 'free_y') +
   theme_minimal()+
   theme(panel.grid.minor = element_blank())+
