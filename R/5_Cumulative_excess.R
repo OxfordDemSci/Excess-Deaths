@@ -59,14 +59,14 @@ blvt_uk <- blvt %>%
 
 # total population plot
   ggplot(Total.deaths.UK[model == 'gam'])+
-  geom_rect(data = blvt_uk , alpha = 1/3,
-            aes(xmin = week - .5, 
-                xmax = week + .5,
-                ymin = -Inf, ymax = Inf,
-                fill = index))+
-  scale_fill_paletteer_c("grDevices::Grays", direction = -1,
-                         guide = guide_colorbar(title.position = "top", barwidth = 15, barheight = 1)
-  )+
+  # geom_rect(data = blvt_uk , alpha = 1/3,
+  #           aes(xmin = week - .5, 
+  #               xmax = week + .5,
+  #               ymin = -Inf, ymax = Inf,
+  #               fill = index))+
+  # scale_fill_paletteer_c("grDevices::Grays", direction = -1,
+  #                        guide = guide_colorbar(title.position = "top", barwidth = 15, barheight = 1)
+  # )+
     #facet_grid(.~model)+
   geom_hline(yintercept = 0, color = "black", size = 1)+
   geom_path(aes(week, cum.diff.deaths, color = sex), size = 1,show.legend = F, lineend = "round")+
@@ -105,15 +105,15 @@ unique(Deaths.UK.2020$age.n)
 # plots for the age groups
 
 
-
+library(patchwork)
 
 f1 <- ggplot(Deaths.UK.2020[model == 'gam'])+
-  geom_rect(data = blvt_uk , alpha = 1/3,
-            aes(xmin = week - .5,
-                xmax = week + .5,
-                ymin = -Inf, ymax = Inf,
-                fill = index))+
-  scale_fill_paletteer_c("grDevices::Grays", direction = -1)+
+  # geom_rect(data = blvt_uk , alpha = 1/3,
+  #           aes(xmin = week - .5,
+  #               xmax = week + .5,
+  #               ymin = -Inf, ymax = Inf,
+  #               fill = index))+
+  # scale_fill_paletteer_c("grDevices::Grays", direction = -1)+
   geom_hline(yintercept = 0, color = "black", size = 1)+
   geom_path(aes(week, cum.diff.deaths, color = sex), size = 1,show.legend = F, lineend = "round")+
   scale_color_manual(values = c("indianred4", "black"))+
