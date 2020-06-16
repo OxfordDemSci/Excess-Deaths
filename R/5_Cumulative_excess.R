@@ -71,8 +71,8 @@ blvt_uk <- blvt %>%
   geom_hline(yintercept = 0, color = "black", size = 1)+
   geom_path(aes(week, cum.diff.deaths, color = sex), size = 1,show.legend = F, lineend = "round")+
   scale_color_manual(values = c("indianred4", "black"))+
-  coord_cartesian(xlim = c(1, 22))+
-  scale_x_continuous(breaks = 1:22, expand = c(0,0))+
+  coord_cartesian(xlim = c(1, 23))+
+  scale_x_continuous(breaks = 1:23, expand = c(0,0))+
     theme_minimal()+
    theme(
      #panel.ontop = TRUE,
@@ -117,8 +117,8 @@ f1 <- ggplot(Deaths.UK.2020[model == 'gam'])+
   geom_hline(yintercept = 0, color = "black", size = 1)+
   geom_path(aes(week, cum.diff.deaths, color = sex), size = 1,show.legend = F, lineend = "round")+
   scale_color_manual(values = c("indianred4", "black"))+
-  coord_cartesian(xlim = c(1, 22))+
-  scale_x_continuous(breaks = seq(1,20,5), expand = c(0,0))+
+  coord_cartesian(xlim = c(1, 23))+
+  scale_x_continuous(breaks = seq(0,23,5), expand = c(0,0))+
   theme_minimal()+
   theme(
     #panel.ontop = TRUE,
