@@ -181,3 +181,53 @@ m
 f
 dev.off()
 
+
+###############################################################################
+
+
+y1       <- 2010
+
+m <- ggplot() +
+  geom_ribbon(data = Deaths.UK[sex == 'm' & year >= y1 & model %in% c('gam','glm')], 
+              aes(x = date, ymin = lower.CI, ymax = upper.CI, fill = model),alpha = 1/10) +
+  geom_point(data = Deaths.UK[sex == 'm' & year >= y1 & model == 'observed'], aes(x = date, y = deaths), size = 0.8, col = 'black',alpha = 1/7) +
+  geom_line(data = Deaths.UK[sex == 'm' & year >= y1 & model != 'observed'], aes(x = date, y = deaths, col = model))+
+  geom_line(data = Deaths.UK[sex == 'm' & year == 2020 & model == 'observed'], aes(x = date, y = deaths, col = '2020'))+
+  facet_wrap(~ age.n, scales = 'free_y') +
+  theme_minimal()+
+  theme(panel.grid.minor = element_blank())+
+  scale_y_continuous(labels = scales::label_number(1)) +
+  labs(
+    title = 'Observed vs. expected England and Wales death counts by age and year with GAM, GLM and average',
+    x = 'Week of year',
+    y = 'Deaths per week',
+    caption = 'Source data: ONS',
+    subtitle = 'Male population. Shaded areas indicate 95% Poisson prediction intervals. 2020 are extrapolated predictions.'
+  )
+m
+
+f <- ggplot() +
+  geom_ribbon(data = Deaths.UK[sex == 'f' & year >= y1 & model %in% c('gam','glm')], 
+              aes(x = date, ymin = lower.CI, ymax = upper.CI, fill = model),alpha = 1/10) +
+  geom_point(data = Deaths.UK[sex == 'f' & year >= y1 & model == 'observed'], aes(x = date, y = deaths), size = 0.8, col = 'black',alpha = 1/7) +
+  geom_line(data = Deaths.UK[sex == 'f' & year >= y1 & model != 'observed'], aes(x = date, y = deaths, col = model))+
+  geom_line(data = Deaths.UK[sex == 'f' & year == 2020 & model == 'observed'], aes(x = date, y = deaths, col = '2020'))+
+  facet_wrap(~ age.n, scales = 'free_y') +
+  theme_minimal()+
+  theme(panel.grid.minor = element_blank())+
+  scale_y_continuous(labels = scales::label_number(1)) +
+  labs(
+    title = 'Observed vs. expected England and Wales death counts by age and year with GAM, GLM and average',
+    x = 'Week of year',
+    y = 'Deaths per week',
+    caption = 'Source data: ONS',
+    subtitle = 'Female population. Shaded areas indicate 95% Poisson prediction intervals. 2020 are extrapolated predictions.'
+  )
+f
+
+pdf(file = 'Figures/Model_ouptput2.pdf',width = 10,height = 7,useDingbats = F)
+m
+f
+dev.off()
+
+
