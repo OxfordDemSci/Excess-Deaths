@@ -34,29 +34,6 @@ Total.deaths.UK[, cum.diff.deaths := cumsum(diff.deaths), by = .(year,sex,model)
 
 
 
-#X-axis, dates from 1 January to most recent; Y-axis,
-#cumulative number, since 1 January, of lives lost (above zero point) and of lives 
-#saved (below zero point). Three curves—total population, males, females.
-
-# read in Blavatnik policy stringency index
-# https://www.bsg.ox.ac.uk/research/research-projects/coronavirus-government-response-tracker
-
-blvt <- read_csv("Data/Stringency_index_02062020.csv")
-
-library(lubridate)
-library(scales)
-library(paletteer)
-
-blvt_uk <- blvt %>% 
-  filter(CountryCode == "GBR") %>% 
-  transmute(date = Date %>% ymd(),
-            index = `StringencyIndexForDisplay`,
-            week = date %>% week()) %>% 
-  group_by(week) %>% 
-  summarise(index = index %>% mean()) %>% 
-  ungroup()
-
-
 # total population plot
   ggplot(Total.deaths.UK[model == 'gam'])+
   # geom_rect(data = blvt_uk , alpha = 1/3,
@@ -141,6 +118,31 @@ one
 pdf(file = 'Figures/Cumulative_excess.pdf',width = 10,height = 8)
 one
 dev.off()
+
+
+#X-axis, dates from 1 January to most recent; Y-axis,
+#cumulative number, since 1 January, of lives lost (above zero point) and of lives 
+#saved (below zero point). Three curves—total population, males, females.
+
+# read in Blavatnik policy stringency index
+# https://www.bsg.ox.ac.uk/research/research-projects/coronavirus-government-response-tracker
+# 
+# blvt <- read_csv("Data/Stringency_index_02062020.csv")
+# 
+# library(lubridate)
+# library(scales)
+# library(paletteer)
+# 
+# blvt_uk <- blvt %>% 
+#   filter(CountryCode == "GBR") %>% 
+#   transmute(date = Date %>% ymd(),
+#             index = `StringencyIndexForDisplay`,
+#             week = date %>% week()) %>% 
+#   group_by(week) %>% 
+#   summarise(index = index %>% mean()) %>% 
+#   ungroup()
+
+
 
 # 
 # 
