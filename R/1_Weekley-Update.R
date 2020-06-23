@@ -9,10 +9,10 @@ load('Data/Input_UK_Data.RData')
 #load data for 2020 (updating periodically)
 
 #males
-males.deaths.update <- data.table(read_excel('Data/Update data/publishedweek232020.xlsx',sheet="Weekly figures 2020",range = 'B44:BC63',
+males.deaths.update <- data.table(read_excel('Data/Update data/publishedweek242020.xlsx',sheet="Weekly figures 2020",range = 'B44:BC63',
                                              col_names = F))
 males.deaths.update[,sex:='m']
-females.deaths.update <- data.table(read_excel('Data/Update data/publishedweek232020.xlsx',sheet="Weekly figures 2020",range = 'B66:BC85',
+females.deaths.update <- data.table(read_excel('Data/Update data/publishedweek242020.xlsx',sheet="Weekly figures 2020",range = 'B66:BC85',
                                                col_names = F))
 females.deaths.update[,sex:='f']
 
