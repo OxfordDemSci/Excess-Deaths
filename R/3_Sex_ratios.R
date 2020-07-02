@@ -14,7 +14,17 @@ Sex.ratio <- Deaths.UK[, list(sex.ratio.deaths = deaths[sex=='m']/deaths[sex=='f
 
 Sex.ratio[, log.sr.deaths := log(sex.ratio.deaths)]
 Sex.ratio[, log.sr.mx := log(sex.ratio.mx)]
-Sex.ratio[, training := ifelse(year == 2020, FALSE, TRUE)]
+
+# lowest year in the data
+initial.year <- 2010
+
+# period to be forecasted
+last.year    <- 2020
+
+# Create variable for training period
+Sex.ratio[,training := ifelse(year < last.year, TRUE, FALSE)]
+
+Sex.ratio[year == last.year & week %in% 0:9,]$training <- TRUE
 
 
 write.csv(Sex.ratio, file = 'Dashboard/Data/Sex_ratios.csv')

@@ -21,13 +21,15 @@ last.year    <- 2020
 # Create variable for training period
 Data.dt[,training := ifelse(year < last.year, TRUE, FALSE)]
 
+Data.dt[year == last.year & week %in% 0:9,]$training <- TRUE
+
 #####################################
 
 #start model list
 models <- list()
 
 #Subset for modeling data
-model.data <- Data.dt[year < last.year]
+model.data <- Data.dt[training == TRUE]
 
 #### Gam model
 models$gam.lcds <- gam( deaths ~ 1 + sex  +
@@ -126,6 +128,8 @@ Deaths.UK <- merge(Deaths.UK,Deaths.UK.u,by = c('model','sex','age.n','year','we
 ### calculate mx
 Deaths.UK[, mx := deaths/exposures]
 Deaths.UK[, log.mx := log10(mx)]
+
+Deaths.UK[,week:= week + 1]
 
 ### save file for dashboard
 write.csv(Deaths.UK,file = 'Dashboard/Data/Deaths_UK.csv')
