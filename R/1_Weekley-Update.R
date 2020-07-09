@@ -8,11 +8,13 @@ load('Data/Input_UK_Data.RData')
 
 #load data for 2020 (updating periodically)
 
+#download most recent file 
+#https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales
 #males
-males.deaths.update <- data.table(read_excel('Data/Update data/publishedweek252020.xlsx',sheet="Weekly figures 2020",range = 'B44:BC63',
+males.deaths.update <- data.table(read_excel('Data/Update data/publishedweek262020.xlsx',sheet="Weekly figures 2020",range = 'B44:BC63',
                                              col_names = F))
 males.deaths.update[,sex:='m']
-females.deaths.update <- data.table(read_excel('Data/Update data/publishedweek252020.xlsx',sheet="Weekly figures 2020",range = 'B66:BC85',
+females.deaths.update <- data.table(read_excel('Data/Update data/publishedweek262020.xlsx',sheet="Weekly figures 2020",range = 'B66:BC85',
                                                col_names = F))
 females.deaths.update[,sex:='f']
 
@@ -21,7 +23,7 @@ update.deaths <- update.deaths[, c(1,55,2:54)]
 names(update.deaths) <- c('agegroup','sex',1:53)
 update.deaths[,age:= c(0,1,seq(5,90,5)), by = list(sex)]
 
-update.deaths <- melt(update.deaths, id.vars = c('age','agegroup','sex'),variable.name = 'week',value.name = 'deaths',variable.factor = 'F')
+update.deaths <- data.table(melt(update.deaths, id.vars = c('age','agegroup','sex'),variable.name = 'week',value.name = 'deaths',variable.factor = 'F'))
 update.deaths[, week:=as.numeric(week)]
 
 #need to regroup to original age groups
@@ -74,10 +76,11 @@ exposures.splines <- function(year =vec1$year,population=vec1$population, weeks.
   return(results)
 }
 
-exposures <- pop.age.groups[,exposures.splines(year = year,population = population ,weeks.inter = weeks.inter ), by = list(sex,age.n)]
+exposures <- pop.age.groups[,exposures.splines(year = year,population = population ,weeks.inter = weeks.inter ), 
+                            by = list(sex,age.n)]
 exposures <- exposures[order(sex,year,week,age.n)]
 
-#correct exposures, these are pop estiamtes at the middle of year, they are lagged 26 weeks.
+#correct exposures, these are pop estimates at the middle of year, they are lagged 26 weeks.
 
 exposures <- exposures[year %in% 2010:2020]
 
@@ -95,7 +98,7 @@ Data.dt <- merge(exposures,deaths.new,by = c('sex','age.n','year','week'))
 
 Data.dt[year == 2020]
 
-# Annualize exposure
+# Annualized exposure
 Data.dt[,exposures := exposures*7/365.25]
 
 origin_date <- lubridate::as_date('2010-01-01')

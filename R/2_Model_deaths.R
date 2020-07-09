@@ -6,22 +6,24 @@ library(ggplot2)
 library(lubridate)
 library(data.table)
 
-#run 1_Weekley-Update.R to update from excel file from ONS when needed
+#run 1_Weekly-Update.R to update from excel file from ONS when needed
 
 load('Data/Weekley_Deaths_UK_2010-20.Rdata')
 
-# set period to include in traning data
+# set period to include in training data
 
 # lowest year in the data
 initial.year <- 2010
 
-# period to be forecasted
+# period to be forecast
 last.year    <- 2020
 
 # Create variable for training period
 Data.dt[,training := ifelse(year < last.year, TRUE, FALSE)]
 
 Data.dt[year == last.year & week %in% 0:9,]$training <- TRUE
+
+unique(Data.dt$age.n)
 
 #####################################
 
@@ -33,7 +35,7 @@ model.data <- Data.dt[training == TRUE]
 
 #### Gam model
 models$gam.lcds <- gam( deaths ~ 1 + sex  +
-                        s(week, bs = 'cp', fx = T) + # cubic penalized splines for week
+                        s(week, bs = 'cp', by = sex,fx = T) + # cubic penalized splines for week
                         s(time, bs = 'ps', by = sex) + # penalized splines for long term 
                         s(age.n,bs = 'ps', by = sex) + # penalized splines for age effect
                         offset(log(exposures)),
@@ -60,20 +62,12 @@ models$Flumomo.exp <-
 #get names of the models
 name.mod <- names(models)
 
-#get deaths and CIs
+#get deaths
 for (i in name.mod) {
   
   var.name   <- paste0('dx.',i)
-  var.name.l <- paste0('dx.',i,'.l')
-  var.name.u <- paste0('dx.',i,'.u')
-  
-  
   #get predictions
   Data.dt[, eval(var.name) := exp(predict(models[[i]],newdata = .SD))]
-  
-  #get credible intervals
-  Data.dt[, eval(var.name.l) := qpois(0.025, eval(as.name(var.name)))]
-  Data.dt[, eval(var.name.u) := qpois(0.975, eval(as.name(var.name)))]
   
 }
 
@@ -110,24 +104,17 @@ Deaths.UK        <- Data.dt[,c('sex','age.n','year','week','date','time','exposu
 names(Deaths.UK) <- c('sex','age.n','year','week','date','time','exposures','observed','gam','glm','average')
 Deaths.UK        <- melt.data.table(Deaths.UK,id.vars = c('sex','age.n','year','week','date','time','exposures'),variable.name = 'model',value.name = 'deaths')
 
-Deaths.UK.l        <- Data.dt[,c('sex','age.n','year','week','date','time','exposures','deaths','dx.gam.lcds.l','dx.Flumomo.exp.l','deaths.avg.mx')]
-Deaths.UK.l$deaths <- NA
-Deaths.UK.l$deaths.avg.mx <- NA
-names(Deaths.UK.l) <- c('sex','age.n','year','week','date','time','exposures','observed','gam','glm','average')
-Deaths.UK.l <- melt.data.table(Deaths.UK.l,id.vars = c('sex','age.n','year','week','date','time','exposures'),variable.name = 'model',value.name = 'lower.CI')
-
-Deaths.UK.u        <- Data.dt[,c('sex','age.n','year','week','date','time','exposures','deaths','dx.gam.lcds.u','dx.Flumomo.exp.u','deaths.avg.mx')]
-Deaths.UK.u$deaths <- NA
-Deaths.UK.u$deaths.avg.mx <- NA
-names(Deaths.UK.u) <- c('sex','age.n','year','week','date','time','exposures','observed','gam','glm','average')
-Deaths.UK.u <- melt.data.table(Deaths.UK.u,id.vars = c('sex','age.n','year','week','date','time','exposures'),variable.name = 'model',value.name = 'upper.CI')
-
-Deaths.UK <- merge(Deaths.UK,Deaths.UK.l,by = c('model','sex','age.n','year','week','date','time','exposures'))
-Deaths.UK <- merge(Deaths.UK,Deaths.UK.u,by = c('model','sex','age.n','year','week','date','time','exposures'))
-
 ### calculate mx
 Deaths.UK[, mx := deaths/exposures]
 Deaths.UK[, log.mx := log10(mx)]
+
+### calculate Predictive intervals
+#get predictive intervals
+Deaths.UK[, lower.CI := qpois(0.025, deaths)]
+Deaths.UK[, upper.CI := qpois(0.975, deaths)]
+
+Deaths.UK[model == 'observed', ]$lower.CI <- NA
+Deaths.UK[model == 'observed', ]$upper.CI <- NA
 
 Deaths.UK[,week:= week + 1]
 
@@ -143,7 +130,7 @@ gdata::keep(Deaths.UK, sure =T)
 y1       <- 2019
 
 m <- ggplot() +
-  geom_ribbon(data = Deaths.UK[sex == 'm' & year >= y1 & model %in% c('gam','glm')], 
+  geom_ribbon(data = Deaths.UK[sex == 'm' & year >= y1 & model %in% c('gam','glm','average')], 
               aes(x = date, ymin = lower.CI, ymax = upper.CI, fill = model),alpha = 1/10) +
   geom_point(data = Deaths.UK[sex == 'm' & year >= y1 & model == 'observed'], aes(x = date, y = deaths), size = 0.8, col = 'black',alpha = 1/7) +
   geom_line(data = Deaths.UK[sex == 'm' & year >= y1 & model != 'observed'], aes(x = date, y = deaths, col = model))+
@@ -162,7 +149,7 @@ m <- ggplot() +
 m
 
 f <- ggplot() +
-  geom_ribbon(data = Deaths.UK[sex == 'f' & year >= y1 & model %in% c('gam','glm')], 
+  geom_ribbon(data = Deaths.UK[sex == 'f' & year >= y1 & model %in% c('gam','glm',' average')], 
               aes(x = date, ymin = lower.CI, ymax = upper.CI, fill = model),alpha = 1/10) +
   geom_point(data = Deaths.UK[sex == 'f' & year >= y1 & model == 'observed'], aes(x = date, y = deaths), size = 0.8, col = 'black',alpha = 1/7) +
   geom_line(data = Deaths.UK[sex == 'f' & year >= y1 & model != 'observed'], aes(x = date, y = deaths, col = model))+
@@ -192,7 +179,7 @@ dev.off()
 y1       <- 2010
 
 m <- ggplot() +
-  geom_ribbon(data = Deaths.UK[sex == 'm' & year >= y1 & model %in% c('gam','glm')], 
+  geom_ribbon(data = Deaths.UK[sex == 'm' & year >= y1 & model %in% c('gam','glm',' average')], 
               aes(x = date, ymin = lower.CI, ymax = upper.CI, fill = model),alpha = 1/10) +
   geom_point(data = Deaths.UK[sex == 'm' & year >= y1 & model == 'observed'], aes(x = date, y = deaths), size = 0.8, col = 'black',alpha = 1/7) +
   geom_line(data = Deaths.UK[sex == 'm' & year >= y1 & model != 'observed'], aes(x = date, y = deaths, col = model))+
@@ -206,12 +193,12 @@ m <- ggplot() +
     x = 'Week of year',
     y = 'Deaths per week',
     caption = 'Source data: ONS',
-    subtitle = 'Male population. Shaded areas indicate 95% Poisson prediction intervals. 2020 are extrapolated predictions.'
+    subtitle = 'Male population. Shaded areas indicate 95% Poisson prediction intervals.'
   )
 m
 
 f <- ggplot() +
-  geom_ribbon(data = Deaths.UK[sex == 'f' & year >= y1 & model %in% c('gam','glm')], 
+  geom_ribbon(data = Deaths.UK[sex == 'f' & year >= y1 & model %in% c('gam','glm',' average')], 
               aes(x = date, ymin = lower.CI, ymax = upper.CI, fill = model),alpha = 1/10) +
   geom_point(data = Deaths.UK[sex == 'f' & year >= y1 & model == 'observed'], aes(x = date, y = deaths), size = 0.8, col = 'black',alpha = 1/7) +
   geom_line(data = Deaths.UK[sex == 'f' & year >= y1 & model != 'observed'], aes(x = date, y = deaths, col = model))+
@@ -225,7 +212,7 @@ f <- ggplot() +
     x = 'Week of year',
     y = 'Deaths per week',
     caption = 'Source data: ONS',
-    subtitle = 'Female population. Shaded areas indicate 95% Poisson prediction intervals. 2020 are extrapolated predictions.'
+    subtitle = 'Female population. Shaded areas indicate 95% Poisson prediction intervals.'
   )
 f
 
