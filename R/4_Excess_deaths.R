@@ -1,5 +1,7 @@
 # Init ------------------------------------------------------------
 
+set.seed(1987)
+
 rm(list=ls())
 
 library(data.table)
@@ -10,9 +12,10 @@ dat <- list()
 # Constants -------------------------------------------------------
 
 cnst <- list()
-# starting year and week for excess deaths calculation
+# starting year and weeks for excess deaths calculation
 cnst$jumpoff.year <- 2020
 cnst$jumpoff.week <- 10
+cnst$final.week <- 26
 cnst$n.sim <- 1e3
 
 # Data preparation ------------------------------------------------
@@ -64,7 +67,6 @@ dat$simulations <-
 # calculate (cumulative) excess deaths,
 # cumulative observed deaths and cumulative expected/simulated deaths
 # for stratum, model, and simulation run
-# starting 1st week 2020
 dat$simulations[, excess.deaths := observed.deaths - simulated.deaths]
 dat$simulations[
   ,
@@ -84,7 +86,7 @@ sum(results.2020[model %in% 'gam.final' & age.n != 0,]$observed.deaths)
 
 # Total excess deaths end of week 26 both sexes ages 15+
 dat$simulations[
-  age.n != 0 & week == 26,
+  age.n != 0 & week == cnst$final.week,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over sex and age is implicit here
   by = .(simulation.id, model)][
@@ -99,7 +101,7 @@ dat$simulations[
 
 # Total excess deaths end of week 26 ages 15+, by sex
 dat$simulations[
-  age.n != 0 & week == 26,
+  age.n != 0 & week == cnst$final.week,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over age is implicit here
   by = .(simulation.id, model, sex)][
@@ -114,7 +116,7 @@ dat$simulations[
 
 # Total excess deaths end of week 26 both sexes, by age
 dat$simulations[
-  age.n != 0 & week == 26,
+  age.n != 0 & week == cnst$final.week,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over sex is implicit here
   by = .(simulation.id, model, age.n)][
@@ -129,7 +131,7 @@ dat$simulations[
 
 # Total excess deaths end of week 26, by age and sex
 dat$simulations[
-  age.n != 0 & week == 26,
+  age.n != 0 & week == cnst$final.week,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over sex is implicit here
   by = .(simulation.id, model, age.n, sex)][
@@ -146,7 +148,7 @@ dat$simulations[
 
 # Percent above expected total deaths end of week 26
 dat$simulations[
-  age.n != 0 & week == 26,
+  age.n != 0 & week == cnst$final.week,
   .(percent.above =
       (sum(cum.observed.deaths)/sum(cum.simulated.deaths)-1)*100),
   # summation over sex and age is implicit here
@@ -162,7 +164,7 @@ dat$simulations[
 
 # Percent above expected total deaths end of week 26, by sex
 dat$simulations[
-  age.n != 0 & week == 26,
+  age.n != 0 & week == cnst$final.week,
   .(percent.above =
       (sum(cum.observed.deaths)/sum(cum.simulated.deaths)-1)*100),
   # summation over sex and age is implicit here
