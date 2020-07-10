@@ -81,8 +81,9 @@ dat$simulations[
 # Calculate statistics of interest --------------------------------
 
 
-#Total deaths registered end of week 26
-sum(results.2020[model %in% 'gam.final' & age.n != 0,]$observed.deaths)
+# Total deaths registered end of week 26
+sum(dat$excess.deaths[model %in% 'gam.poisson' &
+                    age.n != 0,]$observed.deaths)
 
 # Total excess deaths end of week 26 both sexes ages 15+
 dat$simulations[
