@@ -99,6 +99,7 @@ nax  <- diff(unique(Deaths.Population.EW.2001.2020$age))/2
 EW.results.2 <- Deaths.Population.EW.2001.2020[, e0.frommx(nmx = mx,age = age,nax = c(nax,Inf),
                                                            sex = ifelse(sex == 'females','f','m') ) , by = .(year,sex)]
 
+
 save(EW.results,EW.results.2,life.tables.EW.1982.2018,file = 'Data/LifeExpectancyInequality.RData')
 
 

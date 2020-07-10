@@ -14,13 +14,19 @@ EW.results <- EW.results[sex != 'both']
 Figure.1 <- ggplot(EW.results,aes(x=year, y = e0))+
   ggtitle('A) Life expectancy at birth')+
   geom_ribbon(aes(x=year, y = e0, ymin = lower.e0, ymax = upper.e0, fill = sex), show.legend = F, alpha = 1/4)+
-    geom_path(aes(year, e0, color = sex), size = 1,show.legend = F, lineend = "round")+
+    geom_path(aes(year, e0, color = sex), size = 1.2,show.legend = F, lineend = "round")+
   scale_color_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
     scale_fill_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
+  theme_gray(base_size = 16)+
   theme(
     aspect.ratio = 1,
     text = element_text(face = 1)
   )+
+  annotate("text", x = 2004, y = c(82.5,78.2),
+           label = c('Females','Males'),
+           angle = c(30,38),
+           color = c( "#72B2B4", "#B4A097"), 
+           size = 6.5, hjust = 0, vjust = 1)+
   labs(
     x = NULL,
     y = "Years"
@@ -29,11 +35,12 @@ Figure.1 <- ggplot(EW.results,aes(x=year, y = e0))+
 Figure.1
 
 Figure.2 <- ggplot(EW.results,aes(x=year, y = sigma))+
-  ggtitle('B) Lifespan inequality (standard deviation)')+
+  ggtitle('B) Lifespan inequality')+
   geom_ribbon(aes(x=year, y = sigma, ymin = lower.sigma, ymax = upper.sigma, fill = sex), show.legend = F, alpha = 1/4)+
-  geom_path(aes(year, sigma, color = sex), size = 1,show.legend = T, lineend = "round")+
+  geom_path(aes(year, sigma, color = sex), size = 1.2,show.legend = F, lineend = "round")+
   scale_color_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
   scale_fill_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
+  theme_gray(base_size = 16)+
   theme(
     aspect.ratio = 1,
     text = element_text(face = 1)
@@ -46,6 +53,8 @@ Figure.2 <- ggplot(EW.results,aes(x=year, y = sigma))+
 Figure.2
 
 Figure.3 <- Figure.1|Figure.2
+
+Figure.3
 
 
 pdf(file = 'Figures/Figure_3.pdf',width = 9 ,height = 7)
@@ -77,5 +86,9 @@ ggplot(EW.results,aes(x=year, y = e0))+
     x = NULL,
     y = "Years"
   )
+
+########################
+cbind(EW.results[,1:2],
+      round(EW.results[,3:8],1))
 
 
