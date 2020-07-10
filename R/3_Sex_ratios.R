@@ -9,65 +9,20 @@ load('Data/Deaths_UK.RData')
 
 ## On mortality risk
 
-Sex.ratio <- Deaths.UK[, list(sex.ratio.deaths = deaths[sex=='m']/deaths[sex=='f'],
-                              sex.ratio.mx = mx[sex == 'm']/mx[sex == 'f']), by = list(model,age.n,year,week,date,time)]
-
-Sex.ratio[, log.sr.deaths := log(sex.ratio.deaths)]
-Sex.ratio[, log.sr.mx := log(sex.ratio.mx)]
-
-# lowest year in the data
-initial.year <- 2010
-
-# period to be forecasted
-last.year    <- 2020
-
-# Create variable for training period
-Sex.ratio[,training := ifelse(year < last.year, TRUE, FALSE)]
-
-Sex.ratio[year == last.year & week %in% 0:9,]$training <- TRUE
+Sex.ratio <- Deaths.UK[model %in% 'gam.final', list(sex.ratio.mx = observed.mx[sex == 'm']/observed.mx[sex == 'f']), by = list(model,age.n,year,week,date,time)]
 
 
-write.csv(Sex.ratio, file = 'Dashboard/Data/Sex_ratios.csv')
+ggplot(Sex.ratio[age.n >0 & year %in% 2020]) +
+  geom_line(aes(x = date, y = sex.ratio.mx),size = 1)+
+  geom_hline(yintercept = 1)+
+  facet_grid(rows = 'age.n')+
+    theme_minimal()+
+    theme(panel.grid.minor = element_blank())+
+    guides(color = 'none', fill = 'none')+
+    # labels
+    labs(
+      x = 'Date in 2020',
+      y = 'Sex ratio of the risk of death'
+    )
 
-############# run a diagnostic plot
-y1 <- 2016
-y2 <- 2020
-
-m <- ggplot() +
-  geom_line(data = Sex.ratio[year >= y1 & year < y2 & model == 'observed'], aes(x = date, y = log.sr.deaths), col = 'grey') +
-  geom_line(data = Sex.ratio[ year >= y2 & model == 'observed'], aes(x = date, y = log.sr.deaths),col = 'black') +
-  geom_line(data = Sex.ratio[ year >= y1 & year < y2 & model != 'observed'], aes(x = date, y = log.sr.deaths, col = model))+
-  geom_hline(yintercept = 0)+
-  facet_wrap(~ age.n) +
-  theme_minimal()+
-  theme(panel.grid.minor = element_blank())+
-  labs(
-    title = 'Sex ratio (log scale) of deaths (m/f) in England and Wales by age and year with trend of GAM and GLM',
-    y = 'log10(sex ratio)',
-    x = 'Deaths per week',
-    caption = 'Source data: ONS')
-  
-m
-
-f <-   ggplot() +
-  geom_line(data = Sex.ratio[year >= y1 & year < y2 & model == 'observed'], aes(x = date, y = log.sr.mx), col = 'grey') +
-  geom_line(data = Sex.ratio[ year >= y2 & model == 'observed'], aes(x = date, y = log.sr.mx),col = 'black') +
-  geom_line(data = Sex.ratio[ year >= y1 & year < y2 & model != 'observed'], aes(x = date, y = log.sr.mx, col = model))+
-  geom_hline(yintercept = 0)+
-  facet_wrap(~ age.n) +
-  theme_minimal()+
-  theme(panel.grid.minor = element_blank())+
-  labs(
-    title = 'Sex ratio (log scale) of mx (m/f) in England and Wales by age and year with trend of GAM and GLM',
-    y = 'log10(sex ratio)',
-    x = 'Deaths per week',
-    caption = 'Source data: ONS')
-
-f
-
-
-pdf(file = 'Figures/Sex_ratio_ouptput.pdf',width = 10,height = 7,useDingbats = F)
-m
-f
-dev.off()
 
