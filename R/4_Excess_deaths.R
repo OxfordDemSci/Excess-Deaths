@@ -163,6 +163,23 @@ dat$simulations[
     by = .(model)
   ]
 
+
+# Percent above expected total deaths end of week 26 by age group
+dat$simulations[
+  age.n != 0 & week == cnst$final.week,
+  .(percent.above =
+      (sum(cum.observed.deaths)/sum(cum.simulated.deaths)-1)*100),
+  # summation over sex and age is implicit here
+  by = .(simulation.id, model,age.n)][
+    ,
+    .(
+      avg = mean(percent.above),
+      qlo = quantile(percent.above, 0.025),
+      qhi = quantile(percent.above, 0.975)
+    ),
+    by = .(model,age.n)
+  ]
+
 # Percent above expected total deaths end of week 26, by sex
 dat$simulations[
   age.n != 0 & week == cnst$final.week,
