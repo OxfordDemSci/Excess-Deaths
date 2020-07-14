@@ -16,6 +16,7 @@ cnst <- list()
 cnst$jumpoff.year <- 2020
 cnst$jumpoff.week <- 10
 cnst$final.week <- 26
+# number of simulations for predictive intervals
 cnst$n.sim <- 1e3
 
 # Data preparation ------------------------------------------------
@@ -80,13 +81,14 @@ dat$simulations[
 
 # Calculate statistics of interest --------------------------------
 
-
 # Total deaths registered end of week 26
-sum(dat$excess.deaths[model %in% 'gam.poisson' &
-                    age.n != 0,]$observed.deaths)
+dat$results$total.deaths <-
+  sum(dat$excess.deaths[
+    model %in% 'gam.poisson' &age.n != 0, observed.deaths])
 
 # Total excess deaths end of week 26 both sexes ages 15+
-dat$simulations[
+dat$results$excess.deaths.total <-
+  dat$simulations[
   age.n != 0 & week == cnst$final.week,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over sex and age is implicit here
@@ -101,7 +103,8 @@ dat$simulations[
   ]
 
 # Total excess deaths end of week 26 ages 15+, by sex
-dat$simulations[
+dat$results$excess.deaths.sex <-
+  dat$simulations[
   age.n != 0 & week == cnst$final.week,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over age is implicit here
@@ -116,7 +119,8 @@ dat$simulations[
   ]
 
 # Total excess deaths end of week 26 both sexes, by age
-dat$simulations[
+dat$results$excess.deaths.age <-
+  dat$simulations[
   age.n != 0 & week == cnst$final.week,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over sex is implicit here
@@ -131,10 +135,10 @@ dat$simulations[
   ]
 
 # Total excess deaths end of week 26, by age and sex
-dat$simulations[
+dat$results$excess.deaths.age.sex <-
+  dat$simulations[
   age.n != 0 & week == cnst$final.week,
   .(total.excess.deaths = sum(cum.excess.deaths)),
-  # summation over sex is implicit here
   by = .(simulation.id, model, age.n, sex)][
     ,
     .(
@@ -148,7 +152,8 @@ dat$simulations[
 #write.csv(results.2020, file = 'Dashboard/Data/Excess_Deaths.csv')
 
 # Percent above expected total deaths end of week 26
-dat$simulations[
+dat$results$pct.excess.total <-
+  dat$simulations[
   age.n != 0 & week == cnst$final.week,
   .(percent.above =
       (sum(cum.observed.deaths)/sum(cum.simulated.deaths)-1)*100),
@@ -165,11 +170,12 @@ dat$simulations[
 
 
 # Percent above expected total deaths end of week 26 by age group
-dat$simulations[
+dat$results$pct.excess.age <-
+  dat$simulations[
   age.n != 0 & week == cnst$final.week,
   .(percent.above =
       (sum(cum.observed.deaths)/sum(cum.simulated.deaths)-1)*100),
-  # summation over sex and age is implicit here
+  # summation over sex is implicit here
   by = .(simulation.id, model,age.n)][
     ,
     .(
@@ -181,11 +187,12 @@ dat$simulations[
   ]
 
 # Percent above expected total deaths end of week 26, by sex
-dat$simulations[
+dat$results$pct.excess.sex <-
+  dat$simulations[
   age.n != 0 & week == cnst$final.week,
   .(percent.above =
       (sum(cum.observed.deaths)/sum(cum.simulated.deaths)-1)*100),
-  # summation over sex and age is implicit here
+  # summation over age is implicit here
   by = .(simulation.id, model, sex)][
     ,
     .(
