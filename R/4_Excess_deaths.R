@@ -1,8 +1,8 @@
 # Init ------------------------------------------------------------
 
-set.seed(1987)
-
 rm(list=ls())
+
+set.seed(1987)
 
 library(data.table)
 library(ggplot2)
@@ -19,28 +19,27 @@ cnst$final.week <- 26
 # number of simulations for predictive intervals
 cnst$n.sim <- 1e3
 
-# Data preparation ------------------------------------------------
+# Load data -------------------------------------------------------
 
 load('Data/Deaths_UK.RData')
 
-# Prepare data ----------------------------------------------------
+
+# Simulate (cumulative) excess death counts -----------------------
 
 # subset to excess deaths date range
-dat$excess.deaths <-
+dat$deaths.subset <-
   copy(Deaths.UK[
     year %in% cnst$jumpoff.year &
       week >= cnst$jumpoff.week
   ])
 
 # add data ID, timeseries ID
-dat$excess.deaths[, data.id := .I]
-dat$excess.deaths[, series.id := .GRP, by = .(sex, age.n, model)]
-
-# Perform simulations ---------------------------------------------
+dat$deaths.subset[, data.id := .I]
+dat$deaths.subset[, series.id := .GRP, by = .(sex, age.n, model)]
 
 # prepare data frame for simulations
 dat$simulations <-
-  dat$excess.deaths[, .(
+  dat$deaths.subset[, .(
     model = rep(model, cnst$n.sim),
     series.id = rep(series.id, cnst$n.sim),
     simulation.id = 1:cnst$n.sim,
@@ -63,7 +62,7 @@ dat$simulations[,
 
 # join simulations back into original data
 dat$simulations <-
-  dat$simulations[dat$excess.deaths, on = .(data.id, model, series.id)]
+  dat$simulations[dat$deaths.subset, on = .(data.id, model, series.id)]
 
 # calculate (cumulative) excess deaths,
 # cumulative observed deaths and cumulative expected/simulated deaths
@@ -83,7 +82,7 @@ dat$simulations[
 
 # Total deaths registered end of week 26
 dat$results$total.deaths <-
-  sum(dat$excess.deaths[
+  sum(dat$deaths.subset[
     model %in% 'gam.poisson' &age.n != 0, observed.deaths])
 
 # Total excess deaths end of week 26 both sexes ages 15+
