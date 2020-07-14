@@ -39,10 +39,10 @@ sheet.list.names <- c('MALES','FEMALES')
 
 population.projections.2020  <- data.table(do.call(rbind, lapply(sheet.list.names, function(x){
   population    <- data.table(read_excel('Data/ewpppsumpop18.xls',
-                                         sheet=x,range = 'D9:D29',
+                                         sheet=x,range = 'D9:E29',
                                          col_names = F))
   
-  names(population)  <- as.character(2020)
+  names(population)  <- as.character(2020:2021)
   population$sex     <- tolower(x)
   population$age     <- seq(0,100,5)
   
@@ -122,27 +122,27 @@ death.counts.2020 <- death.counts.2020[,list(deaths = sum(deaths,na.rm = T), yea
 Deaths.EW.1963.2020 <- rbind(death.counts.1963.2019,death.counts.2020[,c('year','sex','age','deaths')])
 
 ############## Make populations also in the same format of ages
-Population.EW.2001.2020 <- rbind(population.2001.2019,population.projections.2020[,c('year','sex','age','population')])
+Population.EW.2001.2021 <- rbind(population.2001.2019,population.projections.2020[,c('year','sex','age','population')])
 
-Population.EW.2001.2020[,age.n:= cut(age,c(0,1,seq(5,90,5),Inf),include.lowest = T,right = F,labels = c(0,1,seq(5,90,5)))]
+Population.EW.2001.2021[,age.n:= cut(age,c(0,1,seq(5,90,5),Inf),include.lowest = T,right = F,labels = c(0,1,seq(5,90,5)))]
 
-Population.EW.2001.2020 <- Population.EW.2001.2020[,list(mid.population = sum(population)), by = list(year,sex,age.n)]
+Population.EW.2001.2021 <- Population.EW.2001.2021[,list(mid.population = sum(population)), by = list(year,sex,age.n)]
 
-names(Population.EW.2001.2020)[3]<-'age'
+names(Population.EW.2001.2021)[3]<-'age'
 
-Population.EW.2001.2020[,age:= as.numeric(as.character(age))]
+Population.EW.2001.2021[,age:= as.numeric(as.character(age))]
 
-Population.EW.2001.2020[,year:= as.numeric(as.character(year))]
+Population.EW.2001.2021[,year:= as.numeric(as.character(year))]
 
-Population.EW.2001.2020[,exposure := ifelse(year != 2020, mid.population, mid.population/2)]
+Population.EW.2001.2021[,exposure := ifelse(year != 2020, mid.population, mid.population/2)]
 
 #checks
 Deaths.EW.1963.2020[,sum(deaths), by = .(year)]
 
-Population.EW.2001.2020[,sum(exposure), by = .(year)]
+Population.EW.2001.2021[,sum(exposure), by = .(year)]
 
-Deaths.Population.EW.2001.2020 <- merge(Population.EW.2001.2020,Deaths.EW.1963.2020,all.x = T)
+Deaths.Population.EW.2001.2020 <- merge(Population.EW.2001.2021[year < 2021],Deaths.EW.1963.2020,all.x = T)
 
-gdata:: keep(Deaths.EW.1963.2020,Population.EW.2001.2020,life.tables.EW.1982.2018,Deaths.Population.EW.2001.2020, sure = T)
+gdata:: keep(Deaths.EW.1963.2020,Population.EW.2001.2021,life.tables.EW.1982.2018,Deaths.Population.EW.2001.2020, sure = T)
 
 

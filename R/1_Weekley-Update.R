@@ -80,8 +80,6 @@ exposures <- pop.age.groups[,exposures.splines(year = year,population = populati
                             by = list(sex,age.n)]
 exposures <- exposures[order(sex,year,week,age.n)]
 
-#correct exposures, these are pop estimates at the middle of year, they are lagged 26 weeks.
-
 exposures <- exposures[year %in% 2010:2020]
 
 ages <- unique(exposures$age.n)
