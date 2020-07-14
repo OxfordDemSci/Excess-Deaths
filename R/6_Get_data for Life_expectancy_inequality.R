@@ -15,25 +15,25 @@ life.tables.EW.1982.2018 <- data.table(do.call(rbind, lapply(sheet.list.names, f
                                                          sheet=x,range = 'A7:F108',
                                                          col_names = T))
   males$sex     <- 'males'
-  
+
   females       <- data.table(read_excel('Data/nationallifetables3yearenglandandwales.xls',
                                                            sheet=x,range = 'H7:L108',
                                                            col_names = T))
   females$sex   <- 'females'
   females$x     <- males$x
-  
+
   LT            <- rbind(males,females[,c('x','mx','qx','lx','dx','ex','sex')])
-  
+
   LT$period     <- x
-  
-  LT$upper.year <- as.numeric(substr(x,1,4)) + 2 
-  
+
+  LT$upper.year <- as.numeric(substr(x,1,4)) + 2
+
   LT
 })))
 
 # population estimates from 2020 for England and Wales come from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationprojections/datasets/tablea23principalprojectionenglandandwalespopulationinagegroups
 #file ewpppsumpop18
-#Population.projections.2020 
+#Population.projections.2020
 
 sheet.list.names <- c('MALES','FEMALES')
 
@@ -41,20 +41,20 @@ population.projections.2020  <- data.table(do.call(rbind, lapply(sheet.list.name
   population    <- data.table(read_excel('Data/ewpppsumpop18.xls',
                                          sheet=x,range = 'D9:E29',
                                          col_names = F))
-  
+
   names(population)  <- as.character(2020:2021)
   population$sex     <- tolower(x)
   population$age     <- seq(0,100,5)
-  
+
   population         <- data.table(melt(population,id.vars = c('sex','age'),
                                         variable.name = 'year',value.name = 'population'))
-  
+
   population[,year:= as.numeric(as.character(year))]
-  
+
   population[,population:= population * 1000]
-  
+
   population
-  
+
 })))
 
 #population England and wales 2001-2019 in file population_2001_2019_EW_singleyear from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland
@@ -77,18 +77,18 @@ death.counts.1963.2019  <- data.table(do.call(rbind, lapply(sheet.list.names, fu
   deaths    <- data.table(read_excel('Data/finalreftables2019.xlsx',
                                          sheet=x,range = 'B9:BF115',
                                          col_names = T))
-  
+
   deaths$sex     <- ifelse(x == 'Table 4','males','females')
-  
+
   deaths$age     <- 0:105
-  
+
   deaths         <- data.table(melt(deaths,id.vars = c('sex','age'),
                                         variable.name = 'year',value.name = 'deaths'))
-  
+
   deaths[,year:= as.numeric(as.character(year))]
-  
+
   deaths
-  
+
 })))
 
 #aggregate with same age groups of 2020

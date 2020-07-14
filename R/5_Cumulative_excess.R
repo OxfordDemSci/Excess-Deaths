@@ -1,9 +1,11 @@
+# Init ------------------------------------------------------------
+
 rm(list=ls())
 
-library(ggplot2)
 library(data.table)
-library(patchwork)
+library(ggplot2)
 library(scales)
+library(patchwork)
 
 source('R/4_Excess_deaths.R')
 
@@ -40,8 +42,8 @@ Figure.1 <- ggplot(fig1.data)+
   )+
   annotate("text", x = as.Date("2020-06-30"), y = (round(fig1.data[,sum(excess.dx), by = .(sex)]$V1) + c(-1500,+2500)),
            label = lab.fig,
-           #color = c("#72B2B4", "#B4A097",'#615652'), 
-           color = c( "#72B2B4", "#B4A097"), 
+           #color = c("#72B2B4", "#B4A097",'#615652'),
+           color = c( "#72B2B4", "#B4A097"),
            size = 6.5, hjust = 1, vjust = 1)
 Figure.1
 pdf(file = 'Figures/Figure_1.pdf',width = 7 ,height = 9)

@@ -8,7 +8,7 @@ load('Data/Input_UK_Data.RData')
 
 #load data for 2020 (updating periodically)
 
-#download most recent file 
+#download most recent file
 #https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales
 #males
 males.deaths.update <- data.table(read_excel('Data/Update data/publishedweek262020.xlsx',sheet="Weekly figures 2020",range = 'B44:BC63',
@@ -47,7 +47,7 @@ Deaths.DT$age <- as.numeric(as.character(Deaths.DT$age))
 
 weeks.inter <- c(52,52,52,52,52,53,52,52,52,52,52)
 
-# #example 
+# #example
 # vec1        <- pop.age.groups[sex == 'm' & age.n == 15 & year]
 # plot(vec1$year, vec1$population, main = "approx(.) and approxfun(.)")
 # #points(approx(vec1$year, vec1$population,n = sum(weeks.inter)), col = 2, pch = "*")
@@ -58,25 +58,25 @@ exposures.splines <- function(year =vec1$year,population=vec1$population, weeks.
   #plot(1:(sum(weeks.inter)+1),interpolation$y)
   #interpolation <- spline(year, population,n = sum(weeks.inter)+1)
   #inter.diff <- abs(diff(interpolation$y))
-  
+
   #check
   #sum(inter.diff)
   #population[11]-population[1]
-  
+
   #vec.week <- unlist(lapply(weeks.inter, function(x){1:x}))
-  
+
   vec.week <- unlist(lapply(c(52,52,52,52,53,52,52,52,52,52,26), function(x){1:x}))
   vec.week <- c(27:52,vec.week)
   #rearrange week
-  
+
   year.vec <- c(rep(year,c(26,52,52,52,52,53,52,52,52,52,52,26)))
-  
+
   results <- data.table(cbind(year = year.vec, week = vec.week, exposures = interpolation$y))
-  
+
   return(results)
 }
 
-exposures <- pop.age.groups[,exposures.splines(year = year,population = population ,weeks.inter = weeks.inter ), 
+exposures <- pop.age.groups[,exposures.splines(year = year,population = population ,weeks.inter = weeks.inter ),
                             by = list(sex,age.n)]
 exposures <- exposures[order(sex,year,week,age.n)]
 

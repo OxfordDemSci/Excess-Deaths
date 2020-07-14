@@ -29,14 +29,14 @@ CIex.sd(x = age,Nx = Nx,Dx = Dx,sex = 'F')
 ex.fun <- function(x = age,Nx = Nx,Dx = Dx,sex = 'F',...){
 
   ex.stuff <- CIex.sd(x = x,Nx = Nx,Dx = Dx,sex =sex)
-  
+
   results <- data.table(data.frame(ex =ex.stuff$ex,lower.ex = ex.stuff$CIex[1],upper.ex = ex.stuff$CIex[2],
                                    sd =ex.stuff$sd,lower.ex = ex.stuff$CIsd[1],upper.ex = ex.stuff$CIsd[2]))
-    
+
   return(results)
 }
 
-EW.results <- Deaths.Population.EW.2001.2020[, ex.fun(x = age,Nx = exposure,Dx = deaths, sex = ifelse(sex == 'females','F','M')), 
+EW.results <- Deaths.Population.EW.2001.2020[, ex.fun(x = age,Nx = exposure,Dx = deaths, sex = ifelse(sex == 'females','F','M')),
                                              by = .(year,sex)]
 
 EW.results <- EW.results[order(year,sex)]

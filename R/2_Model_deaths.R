@@ -62,7 +62,7 @@ models$gam.nb <-
     deaths ~
       1 + sex +
       # penalized spline for long term trend
-      s(time, bs = 'ps', by = sex) + 
+      s(time, bs = 'ps', by = sex) +
       # penalized spline for age effect
       s(age.n, bs = 'ps', k = 6, by = sex) +
       # penalized cyclic spline for seasonality
@@ -89,7 +89,7 @@ models$gam.poisson <-
     deaths ~
       1 + sex +
       # penalized spline for long term trend
-      s(time, bs = 'ps', by = sex) + 
+      s(time, bs = 'ps', by = sex) +
       # penalized spline for age effect
       s(age.n, bs = 'ps', k = 6, by = sex) +
       # penalized cyclic spline for seasonality
@@ -141,7 +141,7 @@ AverageMortalityModel <-
     .year = enquo(year); .strata = enquos(...)
     .week = enquo(week); .deaths = enquo(deaths);
     .exposures = enquo(exposures)
-    
+
     avg_mx <-
       df %>%
       filter(!!.year %in% training.years) %>%
@@ -150,9 +150,9 @@ AverageMortalityModel <-
         avg_mortality = mean(!!.deaths/!!.exposures),
         .groups = 'drop'
       )
-    
+
     structure(list(avg = avg_mx), class = 'avgmx')
-    
+
   }
 
 predict.avgmx <- function (object, newdata, exposures, ...) {
@@ -178,7 +178,7 @@ name.mod <- names(models)
 
 # expected death counts
 for (i in name.mod) {
-  
+
   var.name   <- paste0('dx.',i)
   # get predictions
   Data.dt[, eval(var.name) := predict(
@@ -187,7 +187,7 @@ for (i in name.mod) {
     exposures = exposures,
     type = 'response', se.fit = FALSE
   )]
-  
+
 }
 
 # create a single data.table in the long form for the dashboard
@@ -240,7 +240,7 @@ Deaths.UK[,week:= week + 1]
 
 # ### save file for dashboard
 # write.csv(Deaths.UK,file = 'Dashboard/Data/Deaths_UK.csv')
-# 
+#
 # save(Deaths.UK, models, file = 'Data/Deaths_UK.RData')
 
 # Diagnostic plots ------------------------------------------------
@@ -261,10 +261,10 @@ PlotObservedVsExpectedDeaths <- function (
   date_breaks,
   date_labels
 ) {
-  
+
   require(ggplot2)
   require(rlang)
-  
+
   the_plot <-
     ggplot(df) +
     list(
@@ -344,11 +344,11 @@ PlotObservedVsExpectedDeaths <- function (
             )
         )
       }
-      
+
     )
-  
+
   print(the_plot)
-  
+
 }
 
 Deaths.UK.for.plot <- copy(Deaths.UK)

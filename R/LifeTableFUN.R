@@ -8,7 +8,7 @@ lifetable <- function(x, Nx, Dx, sex="M", ax=NULL){
     if(x[1]!=0 | x[2]!=1){
       ax <- n/2
       ax[m] <- 1 / mx[m]
-    }else{    
+    }else{
       if(sex=="F"){
         if(mx[1]>=0.107){
           ax[1] <- 0.350
@@ -55,7 +55,7 @@ lifetable.qx <- function(x, qx, sex="M", ax=NULL, last.ax=5.5){
     if(x[1]!=0 | x[2]!=1){
       ax <- n/2
       ax[m] <- last.ax
-    }else{    
+    }else{
       if(sex=="F"){
         if(qx[1]>=0.1){
           ax[1] <- 0.350
@@ -139,19 +139,19 @@ CIex.sd <- function(x, Nx, Dx, sex = "M", ax = NULL,
                         last.ax=last.ax)$ex[wh])
   }
   exsim <- apply(QX, 2, fun.ex)
-  
+
   fun.sd <- function(qx){
     return(lifetable.qx(x=x, qx, sex=sex,
                         last.ax=last.ax)$sd[wh])
   }
-  
+
   sdsim <- apply(QX, 2, fun.sd)
 
   ## confidence interval
   CI <- quantile(exsim,
                  probs = c((1-level)/2,
                            1 - (1-level)/2))
-  
+
   CI.sd <- quantile(sdsim,
                  probs = c((1-level)/2,
                            1 - (1-level)/2))
