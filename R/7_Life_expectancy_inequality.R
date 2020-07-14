@@ -45,4 +45,9 @@ EW.results <- EW.results[order(year,sex)]
 
 save(EW.results,life.tables.EW.1982.2018,file = 'Data/LifeExpectancyInequality.RData')
 
+## percentage of poulation 85+ in females and males
+
+100*Deaths.Population.EW.2001.2020[year == 2020 & age >= 85, sum(mid.population), by =sex]$V1/
+  Deaths.Population.EW.2001.2020[year == 2020, sum(mid.population), by =sex]$V1
+
 

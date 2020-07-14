@@ -87,8 +87,11 @@ ggplot(EW.results,aes(x=year, y = e0))+
     y = "Years"
   )
 
-########################
-cbind(EW.results[,1:2],
-      round(EW.results[,3:8],1))
+
+
+#life expectancy results in the manuscript
+cbind(EW.results[order(sex,year),1:2],round(EW.results[order(sex,year),3:8],1))
+
+
 
 
