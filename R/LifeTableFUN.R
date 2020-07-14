@@ -91,7 +91,50 @@ lifetable.qx <- function(x, qx, sex="M", ax=NULL, last.ax=5.5){
 }
 
 
-
+lifetable.mx <- function(x, mx, sex="M", ax=NULL){
+  m <- length(x)
+  n <- c(diff(x), NA)
+  if(is.null(ax)){
+    ax <- rep(0,m)
+    if(x[1]!=0 | x[2]!=1){
+      ax <- n/2
+      ax[m] <- 1 / mx[m]
+    }else{    
+      if(sex=="F"){
+        if(mx[1]>=0.107){
+          ax[1] <- 0.350
+        }else{
+          ax[1] <- 0.053 + 2.800*mx[1]
+        }
+      }
+      if(sex=="M"){
+        if(mx[1]>=0.107){
+          ax[1] <- 0.330
+        }else{
+          ax[1] <- 0.045 + 2.684*mx[1]
+        }
+      }
+      ax[-1] <- n[-1]/2
+      ax[m] <- 1 / mx[m]
+    }
+  }
+  qx  <- n*mx / (1 + (n - ax) * mx)
+  qx[m] <- 1
+  px  <- 1-qx
+  lx  <- cumprod(c(1,px))
+  dx  <- -diff(lx)
+  Lx  <- n*lx[-1] + ax*dx
+  lx <- lx[-(m+1)]
+  Lx[m] <- lx[m]/mx[m]
+  Lx[is.na(Lx)] <- 0 ## in case of NA values
+  Lx[is.infinite(Lx)] <- 0 ## in case of Inf values
+  Tx  <- rev(cumsum(rev(Lx)))
+  ex  <- Tx/lx
+  sd  <- ex*0
+  sd[1] <-  sqrt(sum(dx*(x+ax-ex[1L])^2))
+  return.df <- data.frame(x, n, mx, ax, qx, px, lx, dx, Lx, Tx, ex, sd)
+  return(return.df)
+}
 
 ## x=agesA
 ## Nx=myE
@@ -165,3 +208,41 @@ CIex.sd <- function(x, Nx, Dx, sex = "M", ax = NULL,
   return(out)
 }
 
+
+
+######### function that included mx
+
+qxax2mx <- function(qx =qx.females.2020 , x = x, last.ax = 5.5, ax = NULL,sex) {
+  m <- length(x)
+  n <- c(diff(x), NA)
+  
+  qx[is.na(qx)] <- 0
+  if(is.null(ax)){
+    ax <- rep(0,m)
+    if(x[1]!=0 | x[2]!=1){
+      ax <- n/2
+      ax[m] <- last.ax
+    }else{    
+      if(sex=="F"){
+        if(qx[1]>=0.1){
+          ax[1] <- 0.350
+        }else{
+          ax[1] <- 0.05 + 3*qx[1]
+        }
+      }
+      if(sex=="M"){
+        if(qx[1]>=0.1){
+          ax[1] <- 0.33
+        }else{
+          ax[1] <- 0.0425 + 2.875*qx[1]
+        }
+      }
+      ax[-1] <- n[-1]/2
+      ax[m] <- last.ax
+    }
+  }
+  
+  mx <- qx / (n - (n - ax) * qx)      
+  
+  mx
+}
