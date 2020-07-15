@@ -1,4 +1,3 @@
-
 library(patchwork)
 library(data.table)
 library(ggplot2)
@@ -25,13 +24,13 @@ Figure.1 <- ggplot(EW.results,aes(x=year, y = e0))+
   annotate("text", x = 2004, y = c(82.5,78.2),
            label = c('Females','Males'),
            angle = c(30,38),
-           color = c( "#72B2B4", "#B4A097"), 
+           color = c( "#72B2B4", "#B4A097"),
            size = 6.5, hjust = 0, vjust = 1)+
   labs(
     x = NULL,
     y = "Years"
   )
-  
+
 Figure.1
 
 Figure.2 <- ggplot(EW.results,aes(x=year, y = sigma))+
