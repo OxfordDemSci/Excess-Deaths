@@ -1,70 +1,90 @@
-library(patchwork)
-library(data.table)
-library(ggplot2)
 
 rm(list=ls())
 
+library(tidyverse)
+
+fig <- list()
+
+source('R/Figure_specifications.R')
+
+# Load data -------------------------------------------------------
+
 load('Data/LifeExpectancyInequality.RData')
 
-EW.results[,sex := factor(sex,levels = c('females' ,'males' ,'both'))]
+# Plot cumulative excess deaths by sex ----------------------------
+fig.data <- EW.results[sex!='both']
 
-EW.results <- EW.results[sex != 'both']
-
-Figure.1 <- ggplot(EW.results,aes(x=year, y = e0))+
+fig$figure3 <-
+  fig.data  %>%
+  ggplot() +
   ggtitle('A) Life expectancy at birth')+
-  geom_ribbon(aes(x=year, y = e0, ymin = lower.e0, ymax = upper.e0, fill = sex), show.legend = F, alpha = 1/4)+
-    geom_path(aes(year, e0, color = sex), size = 1.2,show.legend = F, lineend = "round")+
-  scale_color_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
-    scale_fill_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
-  theme_gray(base_size = 16)+
-  theme(
-    aspect.ratio = 1,
-    text = element_text(face = 1)
-  )+
+  geom_ribbon(
+    aes(
+      x = year,
+      ymin = lower.ex,
+      ymax = upper.ex,
+      fill = sex
+    ),
+    alpha = 0.2
+  ) +
+  geom_line(
+    aes(x = year, y = ex, color = sex)
+  ) +
+  geom_point(
+    aes(x = year, y = ex, color = sex),
+    size = 1
+  ) +
+  #scale_y_continuous(labels = scales::label_comma()) +
+  scale_color_manual(values = c("#1E8B8F","#806152")) +
+  scale_fill_manual(values = fig_spec$sex_colors) +
+  labs(
+    x = NULL,
+    y = 'Years'
+  ) +
   annotate("text", x = 2004, y = c(82.5,78.2),
            label = c('Females','Males'),
            angle = c(30,38),
-           color = c( "#72B2B4", "#B4A097"),
-           size = 6.5, hjust = 0, vjust = 1)+
-  labs(
-    x = NULL,
-    y = "Years"
-  )
+           color = c("#1E8B8F","#806152"),
+           size = 6.5, hjust = 0, vjust = 1) +
+  fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 1.3, show_legend = FALSE)
 
-Figure.1
-
-Figure.2 <- ggplot(EW.results,aes(x=year, y = sigma))+
+fig$figure4 <-
+  fig.data  %>%
+  ggplot() +
   ggtitle('B) Lifespan inequality')+
-  geom_ribbon(aes(x=year, y = sigma, ymin = lower.sigma, ymax = upper.sigma, fill = sex), show.legend = F, alpha = 1/4)+
-  geom_path(aes(year, sigma, color = sex), size = 1.2,show.legend = F, lineend = "round")+
-  scale_color_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
-  scale_fill_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
-  theme_gray(base_size = 16)+
-  theme(
-    aspect.ratio = 1,
-    text = element_text(face = 1)
-  )+
+  geom_ribbon(
+    aes(
+      x = year,
+      ymin = lower.ex.1,
+      ymax = upper.ex.1,
+      fill = sex
+    ),
+    alpha = 0.2
+  ) +
+  geom_line(
+    aes(x = year, y = sd, color = sex)
+  ) +
+  geom_point(
+    aes(x = year, y = sd, color = sex),
+    size = 1
+  ) +
+  #scale_y_continuous(labels = scales::label_comma()) +
+  scale_color_manual(values = c("#1E8B8F","#806152")) +
+  scale_fill_manual(values = fig_spec$sex_colors) +
   labs(
     x = NULL,
     y = NULL
-  )
+  ) +
+  fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 1.3, show_legend = FALSE)
 
-Figure.2
+library(patchwork)
 
-Figure.3 <- Figure.1|Figure.2
+fig_spec$ExportPDF(
+  fig$figure3+fig$figure4, filename = 'Figure_3', path = 'Figures',
+  width = fig_spec$width, height = 0.6*fig_spec$width
+)
 
-Figure.3
 
-
-pdf(file = 'Figures/Figure_3.pdf',width = 9 ,height = 7)
-Figure.3
-dev.off()
-
-## A table with summary measures
-library(reshape2)
-
-cbind(EW.results[year %in% c(2005,2010,2015,2019,2020),1:2],
-      round(EW.results[year %in% c(2005,2010,2015,2019,2020),3:8],1))
 
 
 #Checks with offical lifetables and life expectancy function
@@ -90,6 +110,8 @@ ggplot(EW.results,aes(x=year, y = e0))+
 
 #life expectancy results in the manuscript
 cbind(EW.results[order(sex,year),1:2],round(EW.results[order(sex,year),3:8],1))
+
+
 
 
 
