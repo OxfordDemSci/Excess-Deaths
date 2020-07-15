@@ -9,6 +9,9 @@ library(mgcv)
 
 models <- list()
 dat <- list()
+fig <- list()
+
+source('R/Figure_specifications.R')
 
 # Constants -------------------------------------------------------
 
@@ -259,7 +262,8 @@ PlotObservedVsExpectedDeaths <- function (
   caption_data,
   caption_note,
   date_breaks,
-  date_labels
+  date_labels,
+  point_size = 0.2
 ) {
 
   require(ggplot2)
@@ -268,6 +272,15 @@ PlotObservedVsExpectedDeaths <- function (
   the_plot <-
     ggplot(df) +
     list(
+      # observed deaths
+      geom_point(
+        aes(
+          x = {{date}},
+          y = {{observed_deaths}}
+        ),
+        size = 0.2, shape = 1,
+        color = 'grey70'
+      ),
       # prediction interval
       geom_ribbon(
         aes(
@@ -278,15 +291,6 @@ PlotObservedVsExpectedDeaths <- function (
         ),
         alpha = 0.3
       ),
-      # observed deaths
-      geom_point(
-        aes(
-          x = {{date}},
-          y = {{observed_deaths}}
-        ),
-        size = 0.3,
-        color = 'grey50'
-      ),
       # predicted deaths
       geom_line(
         aes(
@@ -294,7 +298,7 @@ PlotObservedVsExpectedDeaths <- function (
           y = {{expected_deaths}},
           color = {{color_by}}
         ),
-        size = 1
+        size = 0.5
       ),
       # facets
       facet_grid(
@@ -311,7 +315,7 @@ PlotObservedVsExpectedDeaths <- function (
       ),
       scale_y_continuous(
         # ensure integers
-        labels = scales::label_number(1)
+        labels = scales::label_number(1, big.mark = ',')
       ),
       # theming
       theme_minimal(),
@@ -367,31 +371,50 @@ Deaths.UK.for.plot[,`:=`(
     )
 )]
 
-PlotObservedVsExpectedDeaths(
+fig$obs.vs.expected.males.short <-
+  PlotObservedVsExpectedDeaths(
   Deaths.UK.for.plot[sex == 'm' & date >= '2019-06-01'],
-  title = 'Expected vs. observed male weekly deaths in England & Wales by age group under different models',
-  caption_data = 'ONS.',
-  caption_note = 'Shaded regions depict 95% prediction interval.',
   date_labels = '%b %y'
+) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
+fig_spec$ExportPDF(
+  fig$obs.vs.expected.males.short,
+  'obs_vs_expected_males_short',
+  path = 'Figures/',
+  width = fig_spec$width, height = 0.8*fig_spec$width
 )
-PlotObservedVsExpectedDeaths(
+
+fig$obs.vs.expected.females.short <-
+  PlotObservedVsExpectedDeaths(
   Deaths.UK.for.plot[sex == 'f' & date >= '2019-06-01'],
-  title = 'Expected vs. observed female weekly deaths in England & Wales by age group under different models',
-  caption_data = 'ONS.',
-  caption_note = 'Shaded regions depict 95% prediction interval.',
   date_labels = '%b %y'
+) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
+fig_spec$ExportPDF(
+  fig$obs.vs.expected.females.short,
+  'obs_vs_expected_females_short',
+  path = 'Figures/',
+  width = fig_spec$width, height = 0.8*fig_spec$width
 )
-PlotObservedVsExpectedDeaths(
+
+fig$obs.vs.expected.males.long <-
+  PlotObservedVsExpectedDeaths(
   Deaths.UK.for.plot[sex == 'm' & year >= cnst$jumpoff.year-5],
-  title = 'Expected vs. observed male weekly deaths in England & Wales by age group under different models',
-  caption_data = 'ONS.',
-  caption_note = 'Shaded regions depict 95% prediction interval.',
   date_labels = '%b %y'
+) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
+fig_spec$ExportPDF(
+  fig$obs.vs.expected.males.long,
+  'obs_vs_expected_males_long',
+  path = 'Figures/',
+  width = fig_spec$width, height = 0.8*fig_spec$width
 )
-PlotObservedVsExpectedDeaths(
-  Deaths.UK.for.plot[sex == 'f' & year >= cnst$jumpoff.year-5],
-  title = 'Expected vs. observed female weekly deaths in England & Wales by age group under different models',
-  caption_data = 'ONS.',
-  caption_note = 'Shaded regions depict 95% prediction interval.',
-  date_labels = '%b %y'
+
+fig$obs.vs.expected.females.long <-
+  PlotObservedVsExpectedDeaths(
+    Deaths.UK.for.plot[sex == 'f' & year >= cnst$jumpoff.year-5],
+    date_labels = '%b %y'
+  ) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
+fig_spec$ExportPDF(
+  fig$obs.vs.expected.females.long,
+  'obs_vs_expected_females_long',
+  path = 'Figures/',
+  width = fig_spec$width, height = 0.8*fig_spec$width
 )
