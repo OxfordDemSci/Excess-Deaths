@@ -77,19 +77,6 @@ fig_spec$MyGGplotTheme <-
 # figure width (mm)
 fig_spec$width = 170
 
-# figure line and point sizes
-fig_spec$line_size_xs = 0.1
-fig_spec$line_size_s = 0.2
-fig_spec$line_size_m = 0.3
-fig_spec$line_size_l = 0.5
-fig_spec$line_size_xl = 1
-fig_spec$point_size_xs = 0.05
-fig_spec$point_size_s = 0.1
-fig_spec$point_size_m = 0.2
-fig_spec$stroke_size_xs = 0.3
-fig_spec$text_size_s = 2
-fig_spec$text_size_xs = 1.5
-
 # Colors ----------------------------------------------------------
 
 # color palette
@@ -105,6 +92,9 @@ fig_spec$discrete_colors_light <-
     '#A7DDFC', # blue
     '#FAEC8E'  # yellow
     )
+
+fig_spec$sex_colors <-
+  c(`m` = '#806152', `f` = '#1E8B8F')
 
 # Export function -------------------------------------------------
 

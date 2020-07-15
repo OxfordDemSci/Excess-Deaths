@@ -86,7 +86,7 @@ dat$results$total.deaths <-
     model %in% 'gam.poisson' &age.n != 0, observed.deaths])
 
 # Excess deaths by week, sex, and age
-dat$results$excess.deaths.week.sex.age <-
+dat$results$excess.deaths.complete <-
   dat$simulations[
     ,
     .(
@@ -111,6 +111,22 @@ dat$results$excess.deaths.week.sex.age <-
         quantile(cum.excess.deaths, 0.975)
     ),
     by = .(model, sex, age.n, year, week, date, time)
+    ]
+
+# Cumulative excess deaths by week and sex
+dat$results$excess.deaths.week.sex <-
+  dat$simulations[
+    age.n != 0,
+    .(cum.excess.deaths = sum(cum.excess.deaths)),
+    # summation over age is implicit here
+    by = .(simulation.id, date, model, sex)][
+      ,
+      .(
+        avg = mean(cum.excess.deaths),
+        qlo = quantile(cum.excess.deaths, 0.025),
+        qhi = quantile(cum.excess.deaths, 0.975)
+      ),
+      by = .(model, date, sex)
     ]
 
 # Total excess deaths end of week 26 both sexes ages 15+
@@ -231,7 +247,7 @@ dat$results$pct.excess.sex <-
 # Save results ----------------------------------------------------
 
 # fully stratified excess deaths for dashboard
-write.csv(dat$results$excess.deaths.week.sex.age, file = 'Dashboard/Data/Excess_Deaths.csv')
+write.csv(dat$results$excess.deaths.complete, file = 'Dashboard/Data/Excess_Deaths.csv')
 
 results <- dat$results
 save(results, file = 'Data/Excess_Deaths.RData')

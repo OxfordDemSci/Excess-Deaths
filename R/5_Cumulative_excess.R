@@ -3,7 +3,6 @@
 rm(list=ls())
 
 library(tidyverse)
-library(patchwork)
 
 fig <- list()
 
@@ -19,8 +18,6 @@ cnst$age.labels <-
     `75 to 85` = 75,
     `85+` = 85
   )
-cnst$color.sex <-
-  c(`f` = '#72B2B4', `m` = '#B4A097')
 
 source('R/Figure_specifications.R')
 
@@ -31,45 +28,43 @@ load('Data/Excess_Deaths.RData')
 # Plot cumulative excess deaths by sex ----------------------------
 
 fig$figure1 <-
-  results$excess.deaths.week.sex.age %>%
-  filter(model == 'gam.poisson' & age.n != 0) %>%
-  mutate(age.n = factor(age.n, cnst$age.labels, names(cnst$age.labels))) %>%
-  group_by(date, sex) %>%
-  summarise_at(
-    vars(cum.excess.deaths.qlo, cum.excess.deaths.qhi, cum.excess.deaths.avg),
-    sum
-  ) %>%
+  results$excess.deaths.week.sex %>%
+  filter(model == 'gam.poisson') %>%
   ggplot() +
   geom_ribbon(
     aes(
       x = date,
-      ymin = cum.excess.deaths.qlo,
-      ymax = cum.excess.deaths.qhi,
+      ymin = qlo,
+      ymax = qhi,
       fill = sex
     ),
     alpha = 0.2
   ) +
   geom_line(
-    aes(x = date, y = cum.excess.deaths.avg, color = sex)
+    aes(x = date, y = avg, color = sex)
   ) +
   geom_point(
-    aes(x = date, y = cum.excess.deaths.avg, color = sex),
+    aes(x = date, y = avg, color = sex),
     size = 1
   ) +
-  annotate(
-    'text',
-    x = as.Date('2020-07-01'), y = 28e3,
-    label = 'Male', color = cnst$color.sex['m']
-  ) +
-  annotate(
-    'text',
-    x = as.Date('2020-07-01'), y = 24e3,
-    label = 'Female', color = cnst$color.sex['f']
+  geom_text(
+    aes(
+      x = date, y = avg,
+      label = paste0(ifelse(sex == 'f', 'Female\n', 'Male\n'),
+                     formatC(avg, format = 'd', big.mark = ',')),
+      color = sex),
+    hjust = 0, vjust = 1,
+    nudge_x = 1,
+    data =
+      results$excess.deaths.week.sex %>%
+      filter(model == 'gam.poisson') %>%
+      group_by(sex) %>%
+      filter(date == max(date))
   ) +
   scale_x_date(limits = as.Date(c('2020-03-01', '2020-07-07'))) +
   scale_y_continuous(labels = scales::label_comma()) +
-  scale_color_manual(values = cnst$color.sex) +
-  scale_fill_manual(values = cnst$color.sex) +
+  scale_color_manual(values = fig_spec$sex_colors) +
+  scale_fill_manual(values = fig_spec$sex_colors) +
   labs(
     x = NULL,
     y = 'Cumulative excess deaths'
@@ -84,7 +79,7 @@ fig_spec$ExportPDF(
 # Plot cumulative excess by sex and age ---------------------------
 
 fig$figure2 <-
-  results$excess.deaths.week.sex.age %>%
+  results$excess.deaths.complete %>%
   filter(model == 'gam.poisson' & age.n != 0) %>%
   mutate(age.n = factor(age.n, cnst$age.labels, names(cnst$age.labels))) %>%
   ggplot() +
@@ -102,34 +97,37 @@ fig$figure2 <-
   ) +
   geom_point(
     aes(x = date, y = cum.excess.deaths.avg, color = sex),
-    size = 1
+    size = 0.7
   ) +
   facet_wrap(~age.n) +
-  scale_x_date(limits = as.Date(c('2020-03-01', '2020-07-07'))) +
+  scale_x_date(limits = as.Date(c('2020-03-01', '2020-07-22'))) +
   scale_y_continuous(labels = scales::label_comma()) +
-  scale_color_manual(values = cnst$color.sex) +
-  scale_fill_manual(values = cnst$color.sex) +
+  scale_color_manual(values = fig_spec$sex_colors) +
+  scale_fill_manual(values = fig_spec$sex_colors) +
   labs(
     x = NULL,
     y = 'Cumulative excess deaths'
   ) +
   geom_text(
-    aes(x = x, y = y, label = label),
-    data =
-      data.frame(
-        age.n = '85+', x = as.Date('2020-07-01'), y = 13.5e3,
-        label = 'Female'
+    aes(
+      x = date, y = cum.excess.deaths.avg,
+      label = paste0(
+        case_when(sex == 'f' & age.n == '85+' ~ 'Female\n',
+                  sex == 'm' & age.n == '85+' ~ 'Male\n',
+                  age.n != '85+' ~ ''),
+        formatC(cum.excess.deaths.avg,
+                format = 'd', big.mark = ',')
       ),
-    color = cnst$color.sex['f']
-  ) +
-  geom_text(
-    aes(x = x, y = y, label = label),
+      color = sex),
+    size = 3,
+    hjust = 0, vjust = 1,
+    nudge_x = 1,
     data =
-      data.frame(
-        age.n = '85+', x = as.Date('2020-07-01'), y = 10e3,
-        label = 'Male'
-      ),
-    color = cnst$color.sex['m']
+      results$excess.deaths.complete %>%
+      filter(model == 'gam.poisson' & !(age.n %in% c(0, 15))) %>%
+      mutate(age.n = factor(age.n, cnst$age.labels, names(cnst$age.labels))) %>%
+      group_by(sex, age.n) %>%
+      filter(date == max(date))
   ) +
   fig_spec$MyGGplotTheme(
     hgrid = TRUE,
@@ -142,4 +140,3 @@ fig_spec$ExportPDF(
   fig$figure2, filename = 'Figure_2', path = 'Figures',
   width = fig_spec$width, height = 0.8*fig_spec$width
 )
-
