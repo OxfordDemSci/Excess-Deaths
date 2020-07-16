@@ -419,3 +419,5 @@ fig_spec$ExportPDF(
   width = fig_spec$width, height = 0.8*fig_spec$width
 )
 
+
+write.csv(Deaths.UK.for.plot,file = 'Dashboard/Data/Deaths_UK_Week.csv')
