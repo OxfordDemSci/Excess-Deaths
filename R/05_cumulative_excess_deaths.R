@@ -136,7 +136,7 @@ fig$figure2 <-
     ),
     size = 3,
     hjust = 0, vjust = 1,
-    nudge_x = 1,
+    nudge_x = 3,
     data =
       results$excess.deaths.complete %>%
       filter(model == 'gam.nb' #&
@@ -155,9 +155,9 @@ fig$figure2 <-
 
 fig_spec$ExportPDF(
   fig$figure2, filename = 'Figure_2', path = 'Figures',
-  width = fig_spec$width, height = 0.7*fig_spec$width, scale = 1.2
+  width = fig_spec$width, height = 0.7*fig_spec$width, scale = 1.21
 )
 fig_spec$ExportPNG(
   fig$figure2, filename = 'Figure_2', path = 'Figures',
-  width = fig_spec$width, height = 0.7*fig_spec$width, scale = 1.2
+  width = fig_spec$width, height = 0.7*fig_spec$width, scale = 1.21
 )
