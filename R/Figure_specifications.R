@@ -28,7 +28,7 @@ fig_spec$MyGGplotTheme <-
         text = element_text(color = 'black'),
         line = element_line(size = base_linesize, lineend = 'square'),
         # axis
-        axis.line.y = element_blank(),
+        #axis.line.y = element_blank(),
         axis.title = element_text(size = size_med, face = 'bold'),
         axis.ticks = element_line(size = rel(0.5), color = 'black'),
         axis.text = element_text(size = size_med, color = 'black'),
