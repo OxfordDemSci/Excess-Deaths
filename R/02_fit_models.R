@@ -18,7 +18,7 @@ cnst <- list()
 cnst$initial.year <- 2010
 # period to be forecast
 cnst$jumpoff.year <- 2020
-cnst$jumpoff.week <- 10
+cnst$jumpoff.week <- 1
 # starting week of flu year (counted from 0)
 cnst$fluyear.week.start <- 27
 # period for average mortality rate model
@@ -32,7 +32,7 @@ Data.dt[,
         # create variable for training period
         training := ifelse(
           year < cnst$jumpoff.year |
-            (year == cnst$jumpoff.year & week < cnst$jumpoff.week),
+            (year == cnst$jumpoff.year & iso.week < cnst$jumpoff.week),
           TRUE, FALSE
         )]
 
@@ -374,6 +374,12 @@ fig_spec$ExportPDF(
   path = 'Figures/',
   width = fig_spec$width, height = 0.8*fig_spec$width
 )
+fig_spec$ExportPNG(
+  fig$obs.vs.expected.males.short,
+  'obs_vs_expected_males_short',
+  path = 'Figures/',
+  width = fig_spec$width, height = 0.8*fig_spec$width
+)
 
 fig$obs.vs.expected.females.short <-
   PlotObservedVsExpectedDeaths(
@@ -381,6 +387,12 @@ fig$obs.vs.expected.females.short <-
   date_labels = '%b %y'
 ) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
 fig_spec$ExportPDF(
+  fig$obs.vs.expected.females.short,
+  'obs_vs_expected_females_short',
+  path = 'Figures/',
+  width = fig_spec$width, height = 0.8*fig_spec$width
+)
+fig_spec$ExportPNG(
   fig$obs.vs.expected.females.short,
   'obs_vs_expected_females_short',
   path = 'Figures/',
@@ -398,6 +410,12 @@ fig_spec$ExportPDF(
   path = 'Figures/',
   width = fig_spec$width, height = 0.8*fig_spec$width
 )
+fig_spec$ExportPNG(
+  fig$obs.vs.expected.males.long,
+  'obs_vs_expected_males_long',
+  path = 'Figures/',
+  width = fig_spec$width, height = 0.8*fig_spec$width
+)
 
 fig$obs.vs.expected.females.long <-
   PlotObservedVsExpectedDeaths(
@@ -410,4 +428,9 @@ fig_spec$ExportPDF(
   path = 'Figures/',
   width = fig_spec$width, height = 0.8*fig_spec$width
 )
-
+fig_spec$ExportPNG(
+  fig$obs.vs.expected.females.long,
+  'obs_vs_expected_females_long',
+  path = 'Figures/',
+  width = fig_spec$width, height = 0.8*fig_spec$width
+)
