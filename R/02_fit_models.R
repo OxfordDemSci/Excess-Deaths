@@ -1,5 +1,7 @@
 # Init ------------------------------------------------------------
 
+set.seed(1987)
+
 library(data.table)
 library(mgcv)
 
@@ -18,7 +20,7 @@ cnst <- list()
 cnst$initial.year <- 2010
 # period to be forecast
 cnst$jumpoff.year <- 2020
-cnst$jumpoff.week <- 1
+cnst$jumpoff.week <- 10
 # starting week of flu year (counted from 0)
 cnst$fluyear.week.start <- 27
 # period for average mortality rate model
