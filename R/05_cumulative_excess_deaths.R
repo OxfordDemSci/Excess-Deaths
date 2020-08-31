@@ -77,6 +77,10 @@ fig_spec$ExportPDF(
   fig$figure1, filename = 'Figure_1', path = 'Figures',
   width = fig_spec$width, height = 0.6*fig_spec$width
 )
+fig_spec$ExportPNG(
+  fig$figure1, filename = 'Figure_1', path = 'Figures',
+  width = fig_spec$width, height = 0.6*fig_spec$width
+)
 
 # Plot cumulative excess by sex and age ---------------------------
 
@@ -150,6 +154,10 @@ fig$figure2 <-
   coord_cartesian(clip = 'off')
 
 fig_spec$ExportPDF(
+  fig$figure2, filename = 'Figure_2', path = 'Figures',
+  width = fig_spec$width, height = 0.7*fig_spec$width, scale = 1.2
+)
+fig_spec$ExportPNG(
   fig$figure2, filename = 'Figure_2', path = 'Figures',
   width = fig_spec$width, height = 0.7*fig_spec$width, scale = 1.2
 )

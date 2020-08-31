@@ -112,3 +112,14 @@ fig_spec$ExportPDF <-
     )
   }
 
+fig_spec$ExportPNG <-
+  function (figure, filename, path, ...) {
+    ggsave(
+      filename = paste0(filename, '.png'),
+      plot = figure,
+      path = path,
+      units = 'mm',
+      dpi = 300,
+      ...
+    )
+  }
