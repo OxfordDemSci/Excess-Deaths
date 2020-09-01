@@ -272,7 +272,7 @@ PlotObservedVsExpectedDeaths <- function (
           x = {{date}},
           y = {{observed_deaths}}
         ),
-        size = 0.2, shape = 1,
+        size = 0.2,
         color = 'grey70'
       ),
       # prediction interval
@@ -368,6 +368,7 @@ Deaths.UK.for.plot[,`:=`(
 fig$obs.vs.expected.males.short <-
   PlotObservedVsExpectedDeaths(
   Deaths.UK.for.plot[sex == 'm' & date >= '2019-06-01'],
+  date_breaks = '3 months',
   date_labels = '%b %y'
 ) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
 fig_spec$ExportPDF(
@@ -386,6 +387,7 @@ fig_spec$ExportPNG(
 fig$obs.vs.expected.females.short <-
   PlotObservedVsExpectedDeaths(
   Deaths.UK.for.plot[sex == 'f' & date >= '2019-06-01'],
+  date_breaks = '3 months',
   date_labels = '%b %y'
 ) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
 fig_spec$ExportPDF(
@@ -404,7 +406,8 @@ fig_spec$ExportPNG(
 fig$obs.vs.expected.males.long <-
   PlotObservedVsExpectedDeaths(
   Deaths.UK.for.plot[sex == 'm' & year >= cnst$jumpoff.year-5],
-  date_labels = '%b %y'
+  date_breaks = '1 year',
+  date_labels = '%Y'
 ) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
 fig_spec$ExportPDF(
   fig$obs.vs.expected.males.long,
@@ -422,7 +425,8 @@ fig_spec$ExportPNG(
 fig$obs.vs.expected.females.long <-
   PlotObservedVsExpectedDeaths(
     Deaths.UK.for.plot[sex == 'f' & year >= cnst$jumpoff.year-5],
-    date_labels = '%b %y'
+    date_breaks = '1 year',
+    date_labels = '%Y'
   ) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
 fig_spec$ExportPDF(
   fig$obs.vs.expected.females.long,
