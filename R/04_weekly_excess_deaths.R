@@ -6,6 +6,7 @@ library(data.table)
 library(ggplot2)
 
 dat <- list()
+tab <- list()
 
 # Constants -------------------------------------------------------
 
@@ -16,6 +17,21 @@ cnst$jumpoff.week <- 10
 cnst$final.week <- 33
 # number of simulations for predictive intervals
 cnst$n.sim <- 1e3
+
+cnst$model.labels <-
+  c(
+    `gam.nb` = 'GAM Negative Binomial',
+    `gam.poisson` = 'GAM Poisson',
+    `glm.serfling` = 'GLM Poisson (Serfling)',
+    `avg.mortality` = 'Average mortality'
+  )
+
+cnst$sex.labels <-
+  c(
+    `m` = 'Male',
+    `f` = 'Female',
+    `t` = 'Total'
+  )
 
 # Load data -------------------------------------------------------
 
@@ -245,3 +261,89 @@ write.csv(dat$results$excess.deaths.complete, file = 'Dashboard/Data/Excess_Deat
 
 results <- dat$results
 save(results, file = 'Data/results.RData')
+
+# Export tables ---------------------------------------------------
+
+library(dplyr)
+library(flextable)
+
+tab$supp_tab1 <-
+  results$excess.deaths.total %>%
+  mutate(sex = 't') %>%
+  select(sex, everything()) %>%
+  bind_rows(results$excess.deaths.sex) %>%
+  mutate(
+    model =
+      factor(model, names(cnst$model.labels), cnst$model.labels),
+    sex =
+      factor(sex, names(cnst$sex.labels), cnst$sex.labels)
+  ) %>%
+  tidyr::pivot_wider(
+    values_from = c(avg, qlo, qhi),
+    names_from = c(sex)
+  ) %>%
+  select(model, contains('Female'), contains('Male'), contains('Total')) %>%
+  mutate_at(vars(-model), ~formatC(., format = 'd', big.mark = ',')) %>%
+  flextable() %>%
+  set_header_labels(
+    model = 'Model',
+    avg_Female = 'Excess',
+    qlo_Female = 'Lower PI',
+    qhi_Female = 'Upper PI',
+    avg_Male = 'Excess',
+    qlo_Male = 'Lower PI',
+    qhi_Male = 'Upper PI',
+    avg_Total = 'Excess',
+    qlo_Total = 'Lower PI',
+    qhi_Total = 'Upper PI'
+  ) %>%
+  add_header_row(
+    values = c(' ', 'Female', 'Male', 'Total'),
+    colwidths = c(1, 3, 3, 3)
+  ) %>%
+  align(part = 'header', align = 'center') %>%
+  theme_booktabs() %>%
+  font(part = 'all', fontname = 'serif') %>%
+  fontsize(part = 'all', size = 10) %>%
+  bold(part = 'header')
+print(tab$supp_tab1, preview = 'docx')
+
+tab$supp_tab2 <-
+  results$excess.deaths.age.sex %>%
+  mutate(
+    model =
+      factor(model, names(cnst$model.labels), cnst$model.labels),
+    sex =
+      factor(sex, names(cnst$sex.labels), cnst$sex.labels)
+  ) %>%
+  tidyr::pivot_wider(
+    values_from = c(avg, qlo, qhi),
+    names_from = c(sex)
+  ) %>%
+  select(model, age.n, contains('Female'), contains('Male'), contains('Total')) %>%
+  mutate_at(vars(-model, -age.n), ~formatC(., format = 'd', big.mark = ',')) %>%
+  flextable() %>%
+  merge_v(j = 'model') %>%
+  set_header_labels(
+    model = 'Model',
+    age.n = 'Age group',
+    avg_Female = 'Excess',
+    qlo_Female = 'Lower PI',
+    qhi_Female = 'Upper PI',
+    avg_Male = 'Excess',
+    qlo_Male = 'Lower PI',
+    qhi_Male = 'Upper PI',
+    avg_Total = 'Excess',
+    qlo_Total = 'Lower PI',
+    qhi_Total = 'Upper PI'
+  ) %>%
+  add_header_row(
+    values = c(' ', 'Female', 'Male'),
+    colwidths = c(2, 3, 3)
+  ) %>%
+  align(part = 'header', align = 'center') %>%
+  theme_booktabs() %>%
+  font(part = 'all', fontname = 'serif') %>%
+  fontsize(part = 'all', size = 10) %>%
+  bold(part = 'header')
+print(tab$supp_tab2, preview = 'docx')
