@@ -1,6 +1,5 @@
 # Cross-validation of weekly death count predictive performance
 # Jonas Schöley
-# 2020-08-29
 
 # Init ------------------------------------------------------------
 
@@ -11,6 +10,7 @@ source('R/Figure_specifications.R')
 
 dat <- list()
 fig <- list()
+tab <- list()
 
 # Functions -------------------------------------------------------
 
@@ -52,28 +52,14 @@ EpiYearSequence <- function(from, to) {
 
 # Data preparation ------------------------------------------------
 
-load('Data/Weekley_Deaths_UK_2010-20.Rdata')
+load('Data/weekly_deaths_enwa.Rdata')
 
 dat$raw <- as_tibble(Data.dt)
-
-dat$raw <-
-  dat$raw %>%
-  mutate(
-    # add factor versions of some variables
-    age.n.fct = as.factor(age.n),
-    week.fct = as.factor(week),
-    week_ify.fct = as.factor(week_ify),
-    sex_age_fct = interaction(sex, age.n.fct),
-    # add special days
-    week21 = week == 21,
-    last_week = week == 51,
-    first_week = week == 0
-  )
 
 # definition of cross-validation series
 dat$cv <-
   # set up K-fold cross-validation
-  map(2010:2016, ~.x+1:4)
+  map(2010:2016, ~.x+0:3)
 
 # test training split for each cv series
 dat$tt <-
@@ -81,19 +67,20 @@ dat$tt <-
   map(~filter(dat$raw, year %in% .x)) %>%
   map(~mutate(
     .x, training = ifelse(
-      (year == max(year) & week >= 10),
+      (year == max(year) & iso.week >= 10),
       'test', 'training')
   )) %>%
   bind_rows(.id = 'cv_id') %>%
   mutate(cv_id = as.integer(cv_id)) %>%
-  filter(training == 'training' | (training == 'test' & week <= 30)) %>%
+  filter(training == 'training' | (training == 'test' & iso.week <= 30)) %>%
   group_by(cv_id) %>%
   mutate(
     # weeks since start of series
     time =
       difftime(date, min(date), units = 'weeks') %>%
       floor() %>% as.integer()
-  )
+  ) %>%
+  ungroup()
 
 # example of cross validation set for sub-population of males aged 75-85
 fig$cv <-
@@ -288,7 +275,6 @@ dat$mod <-
   }) %>%
   ungroup()
 
-
 # Predicted versus fitted -----------------------------------------
 
 dat$mod %>%
@@ -302,7 +288,9 @@ dat$mod %>%
   ggplot(aes(x = week)) +
   geom_point(aes(y = observed_deaths)) +
   geom_line(aes(y = predicted_deaths)) +
-  facet_grid(age.n.fct~model_name, scales = 'free_y')
+  scale_y_continuous(labels = scales::label_comma()) +
+  facet_grid(age.n.fct~model_name, scales = 'free_y') +
+  fig_spec$MyGGplotTheme()
 
 # Residual diagnostics --------------------------------------------
 
@@ -310,8 +298,6 @@ dat$mod %>%
 dat$residuals_by_week_and_sex <-
   dat$mod %>%
   unnest(predictions) %>%
-  # only plot residuals for non COVID years
-  filter(cv_id != 7) %>%
   group_by(cv_id, model_name, training,
            week, sex) %>%
   summarise(
@@ -460,3 +446,60 @@ dat$summarised_residuals %>%
       labs(x = NULL, y = .y$summary_type)
 
   })
+
+# Make tables -----------------------------------------------------
+
+library(flextable)
+
+tab$mdape <-
+  dat$summarised_residuals %>%
+  filter(training == 'test') %>%
+  select(model_name, sex, mdape, mdae, me) %>%
+  pivot_wider(names_from = sex, values_from = c(mdape, mdae, me)) %>%
+  select(model_name, contains('_f'), contains('_m')) %>%
+  flextable() %>%
+  set_formatter(
+    mdape_f = function(x) formatC(x, digits = 1, format = 'f'),
+    mdae_f = function(x) formatC(x, format = 'd'),
+    me_f = function(x) formatC(x, format = 'f', digits = 1, flag = '+'),
+    mdape_m = function(x) formatC(x, digits = 1, format = 'f'),
+    mdae_m = function(x) formatC(x, format = 'd'),
+    me_m = function(x) formatC(x, format = 'f', digits = 1, flag = '+')
+  ) %>%
+  bold(~ min(mdape_f) == mdape_f, ~ mdape_f) %>%
+  bold(~ min(mdae_f) == mdae_f, ~ mdae_f) %>%
+  bold(~ min(abs(me_f)) == abs(me_f), ~ me_f) %>%
+  bold(~ min(mdape_m) == mdape_m, ~ mdape_m) %>%
+  bold(~ min(mdae_m) == mdae_m, ~ mdae_m) %>%
+  bold(~ min(abs(me_m)) == abs(me_m), ~ me_m) %>%
+  set_header_labels(
+    model_name = 'Model',
+    mdape_f = 'MdAPE',
+    mdae_f = 'MdAE',
+    me_f = 'ME',
+    mdape_m = 'MdAPE',
+    mdae_m = 'MdAE',
+    me_m = 'ME'
+  ) %>%
+  footnote(
+    i = 1, j = 2:4,
+    value = as_paragraph(
+      c('Median absolute percentage error',
+        'Median absolute error',
+        'Mean error')
+    ),
+    part = 'header'
+  ) %>%
+  add_header_row(
+    values = c('', 'Female', 'Male'),
+    colwidths = c(1, 3, 3)
+  ) %>%
+  theme_booktabs() %>%
+  font(part = 'all', fontname = 'Times New Roman') %>%
+  fontsize(part = 'all', size = 10) %>%
+  fontsize(part = 'footer', size = 8) %>%
+  bold(part = 'header') %>%
+  align(part = 'header', align = 'center') %>%
+  autofit(add_w = 0, add_h = 0)
+print(tab$mdape, preview = 'docx')
+save_as_docx(tab$mdape, path = 'Tables/prediction_errors.docx')

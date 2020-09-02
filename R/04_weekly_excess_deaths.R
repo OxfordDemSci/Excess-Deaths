@@ -282,31 +282,41 @@ tab$supp_tab1 <-
     values_from = c(avg, qlo, qhi),
     names_from = c(sex)
   ) %>%
-  select(model, contains('Female'), contains('Male'), contains('Total')) %>%
-  mutate_at(vars(-model), ~formatC(., format = 'd', big.mark = ',')) %>%
+  select(
+    model,
+    contains('Female'),
+    contains('Male'),
+    contains('Total')
+  ) %>%
   flextable() %>%
   set_header_labels(
     model = 'Model',
     avg_Female = 'Excess',
-    qlo_Female = 'Lower PI',
-    qhi_Female = 'Upper PI',
+    qlo_Female = '.05 PI',
+    qhi_Female = '.95 PI',
     avg_Male = 'Excess',
-    qlo_Male = 'Lower PI',
-    qhi_Male = 'Upper PI',
+    qlo_Male = '.05 PI',
+    qhi_Male = '.95 PI',
     avg_Total = 'Excess',
-    qlo_Total = 'Lower PI',
-    qhi_Total = 'Upper PI'
+    qlo_Total = '.05 PI',
+    qhi_Total = '.95 PI'
+  ) %>%
+  set_formatter_type(
+    fmt_double = '%.0f'
   ) %>%
   add_header_row(
     values = c(' ', 'Female', 'Male', 'Total'),
     colwidths = c(1, 3, 3, 3)
   ) %>%
-  align(part = 'header', align = 'center') %>%
   theme_booktabs() %>%
-  font(part = 'all', fontname = 'serif') %>%
+  font(part = 'all', fontname = 'Times New Roman') %>%
   fontsize(part = 'all', size = 10) %>%
-  bold(part = 'header')
+  fontsize(part = 'footer', size = 8) %>%
+  bold(part = 'header') %>%
+  align(part = 'header', align = 'center') %>%
+  autofit(add_w = 0, add_h = 0)
 print(tab$supp_tab1, preview = 'docx')
+save_as_docx(tab$supp_tab1, path = 'Tables/total_excess_deaths.docx')
 
 tab$supp_tab2 <-
   results$excess.deaths.age.sex %>%
@@ -320,30 +330,40 @@ tab$supp_tab2 <-
     values_from = c(avg, qlo, qhi),
     names_from = c(sex)
   ) %>%
-  select(model, age.n, contains('Female'), contains('Male'), contains('Total')) %>%
-  mutate_at(vars(-model, -age.n), ~formatC(., format = 'd', big.mark = ',')) %>%
+  select(
+    model, age.n,
+    contains('Female'),
+    contains('Male'),
+    contains('Total')
+  ) %>%
   flextable() %>%
+  set_formatter_type(
+    fmt_double = '%.0f'
+  ) %>%
   merge_v(j = 'model') %>%
   set_header_labels(
     model = 'Model',
     age.n = 'Age group',
     avg_Female = 'Excess',
-    qlo_Female = 'Lower PI',
-    qhi_Female = 'Upper PI',
+    qlo_Female = '.05 PI',
+    qhi_Female = '.95 PI',
     avg_Male = 'Excess',
-    qlo_Male = 'Lower PI',
-    qhi_Male = 'Upper PI',
+    qlo_Male = '.05 PI',
+    qhi_Male = '.95 PI',
     avg_Total = 'Excess',
-    qlo_Total = 'Lower PI',
-    qhi_Total = 'Upper PI'
+    qlo_Total = '.05 PI',
+    qhi_Total = '.95 PI'
   ) %>%
   add_header_row(
-    values = c(' ', 'Female', 'Male'),
+    values = c('', 'Female', 'Male'),
     colwidths = c(2, 3, 3)
   ) %>%
-  align(part = 'header', align = 'center') %>%
   theme_booktabs() %>%
-  font(part = 'all', fontname = 'serif') %>%
+  font(part = 'all', fontname = 'Times New Roman') %>%
   fontsize(part = 'all', size = 10) %>%
-  bold(part = 'header')
+  fontsize(part = 'footer', size = 8) %>%
+  bold(part = 'header') %>%
+  align(part = 'header', align = 'center') %>%
+  autofit(add_w = 0, add_h = 0)
 print(tab$supp_tab2, preview = 'docx')
+save_as_docx(tab$supp_tab2, path = 'Tables/excess_deaths_by_age_sex.docx')
