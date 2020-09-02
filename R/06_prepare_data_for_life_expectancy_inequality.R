@@ -102,10 +102,10 @@ names(death.counts.1963.2019)[3]<-'age'
 death.counts.1963.2019[,age:= as.numeric(as.character(age))]
 
 ## now get deaths for 2020
-males.deaths.update <- data.table(read_excel('Data/Update data/publishedweek262020.xlsx',sheet="Weekly figures 2020",range = 'B44:BC63',
+males.deaths.update <- data.table(read_excel('Data/Update data/publishedweek332020.xlsx',sheet="Weekly figures 2020",range = 'B44:BC63',
                                              col_names = F))
 males.deaths.update[,sex:='males']
-females.deaths.update <- data.table(read_excel('Data/Update data/publishedweek262020.xlsx',sheet="Weekly figures 2020",range = 'B66:BC85',
+females.deaths.update <- data.table(read_excel('Data/Update data/publishedweek332020.xlsx',sheet="Weekly figures 2020",range = 'B66:BC85',
                                                col_names = F))
 females.deaths.update[,sex:='females']
 
@@ -134,7 +134,7 @@ Population.EW.2001.2021[,age:= as.numeric(as.character(age))]
 
 Population.EW.2001.2021[,year:= as.numeric(as.character(year))]
 
-Population.EW.2001.2021[,exposure := ifelse(year != 2020, mid.population, mid.population/2)]
+Population.EW.2001.2021[,exposure := ifelse(year != 2020, mid.population, mid.population*(33/52))]
 
 #checks
 Deaths.EW.1963.2020[,sum(deaths), by = .(year)]

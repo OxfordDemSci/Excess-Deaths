@@ -22,9 +22,9 @@ Deaths.Population.EW.2001.2020[,mx:= deaths/exposure]
 #Dx <- Deaths.Population.EW.2001.2020[year == 2005 & sex == 'females']$deaths
 #age <- unique(Deaths.Population.EW.2001.2020$age)
 
-lifetable(x = age,Nx = Nx,Dx = Dx,sex = 'F')
+#lifetable(x = age,Nx = Nx,Dx = Dx,sex = 'F')
 
-CIex.sd(x = age,Nx = Nx,Dx = Dx,sex = 'F')
+#CIex.sd(x = age,Nx = Nx,Dx = Dx,sex = 'F')
 
 ex.fun <- function(x = age,Nx = Nx,Dx = Dx,sex = 'F',...){
 
@@ -44,6 +44,23 @@ EW.results <- EW.results[order(year,sex)]
 ### let's compare results with standard life expectancy function
 
 save(EW.results,life.tables.EW.1982.2018,file = 'Data/LifeExpectancyInequality.RData')
+
+### Some numbers for the paper
+
+paper.results <- EW.results
+paper.results[, ex:= round(ex,1)]
+paper.results[, lower.ex:= round(lower.ex,1)]
+paper.results[, upper.ex:= round(upper.ex,1)]
+paper.results[, sd:= round(sd,1)]
+paper.results[, lower.sd:= round(lower.ex.1,1)]
+paper.results[, upper.sd:= round(upper.ex.1,1)]
+
+#levels in 2020
+paper.results[year == 2020 & sex != 'both']
+
+paper.results[year == 2020 & sex != 'both']$ex - paper.results[year == 2019 & sex != 'both']$ex
+
+paper.results[year == 2020 & sex != 'both']$sd - paper.results[year == 2019 & sex != 'both']$sd
 
 ## percentage of poulation 85+ in females and males
 
