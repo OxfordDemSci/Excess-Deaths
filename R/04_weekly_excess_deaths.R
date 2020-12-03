@@ -1,3 +1,5 @@
+# Calculate weekly excess deaths for England & Wales 2020
+
 # Init ------------------------------------------------------------
 
 set.seed(1987)
@@ -267,6 +269,7 @@ save(results, file = 'Data/results.RData')
 library(dplyr)
 library(flextable)
 
+# total excess deaths at end of observation period by model
 tab$supp_tab1 <-
   results$excess.deaths.total %>%
   mutate(sex = 't') %>%
@@ -301,9 +304,6 @@ tab$supp_tab1 <-
     qlo_Total = '.05 PI',
     qhi_Total = '.95 PI'
   ) %>%
-  set_formatter_type(
-    fmt_double = '%.0f'
-  ) %>%
   add_header_row(
     values = c(' ', 'Female', 'Male', 'Total'),
     colwidths = c(1, 3, 3, 3)
@@ -318,9 +318,11 @@ tab$supp_tab1 <-
 print(tab$supp_tab1, preview = 'docx')
 save_as_docx(tab$supp_tab1, path = 'Tables/total_excess_deaths.docx')
 
+# total excess deaths at end of observation period by model and age
 tab$supp_tab2 <-
   results$excess.deaths.age.sex %>%
   mutate(
+    age.n = as.integer(age.n),
     model =
       factor(model, names(cnst$model.labels), cnst$model.labels),
     sex =
@@ -337,9 +339,6 @@ tab$supp_tab2 <-
     contains('Total')
   ) %>%
   flextable() %>%
-  set_formatter_type(
-    fmt_double = '%.0f'
-  ) %>%
   merge_v(j = 'model') %>%
   set_header_labels(
     model = 'Model',
