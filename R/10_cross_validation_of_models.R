@@ -72,7 +72,7 @@ dat$tt <-
   )) %>%
   bind_rows(.id = 'cv_id') %>%
   mutate(cv_id = as.integer(cv_id)) %>%
-  filter(training == 'training' | (training == 'test' & iso.week <= 30)) %>%
+  filter(training == 'training' | (training == 'test' & iso.week <= 47)) %>%
   group_by(cv_id) %>%
   mutate(
     # weeks since start of series
