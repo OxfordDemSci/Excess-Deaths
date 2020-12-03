@@ -1,3 +1,5 @@
+# Figures for cumulative excess deaths
+
 # Init ------------------------------------------------------------
 
 library(tidyverse)
@@ -61,7 +63,7 @@ fig$figure1 <-
       filter(date == max(date))
   ) +
   scale_x_date(
-    limits = as.Date(c('2020-03-01', '2020-09-01')),
+    limits = as.Date(c('2020-03-01', '2020-12-01')),
     date_breaks = '1 month', date_labels = '%b'
   ) +
   scale_y_continuous(labels = scales::label_comma()) +
@@ -107,7 +109,7 @@ fig$figure2 <-
   ) +
   facet_wrap(~age.n) +
   scale_x_date(
-    limits = as.Date(c('2020-03-01', '2020-09-07')),
+    limits = as.Date(c('2020-03-01', '2020-12-01')),
     date_breaks = '1 month',
     date_labels = '%b'
   ) +
