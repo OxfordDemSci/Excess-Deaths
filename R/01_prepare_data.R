@@ -1,3 +1,5 @@
+# Load and format data on weekly death counts in England and Wales
+
 # Init ------------------------------------------------------------
 
 library(data.table)
@@ -93,7 +95,7 @@ load('Data/Input_UK_Data.RData')
 # https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales
 males.deaths.update <-
   data.table(read_excel(
-    'Data/Update data/publishedweek332020.xlsx',
+    'Data/Update data/publishedweek472020.xlsx',
     sheet="Weekly figures 2020",
     range = 'B44:BC63',
     col_names = F
@@ -101,7 +103,7 @@ males.deaths.update <-
 males.deaths.update[,sex:='m']
 females.deaths.update <-
   data.table(read_excel(
-    'Data/Update data/publishedweek332020.xlsx',
+    'Data/Update data/publishedweek472020.xlsx',
     sheet="Weekly figures 2020",
     range = 'B66:BC85',
     col_names = F
