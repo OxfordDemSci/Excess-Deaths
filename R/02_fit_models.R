@@ -1,3 +1,5 @@
+# Fit expected deaths models to weekly death counts
+
 # Init ------------------------------------------------------------
 
 set.seed(1987)
