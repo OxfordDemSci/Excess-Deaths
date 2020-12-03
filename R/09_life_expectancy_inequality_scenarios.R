@@ -2,6 +2,11 @@ library(data.table)
 
 rm(list=ls())
 
+cnst <- list(
+  # number of weeks under observation in 2020
+  weeks_2020 = 47
+)
+
 source('R/LifeTableFUN.R')
 #baseline qx based on https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/lifeexpectancies/datasets/lifetablesprincipalprojectionenglandandwales
 
@@ -55,28 +60,28 @@ round(lifetable.qx(x,qx.males.2020,sex = 'M')$ex[1],2)
 
 ##### Scenario 1. deaths go back to baseline
 #females
-round(ex.2020.1$ex[1]*(33/52) + lifetable.qx(x,qx.females.2020,sex = 'F')$ex[1]*((52-33)/52),2)
+round(ex.2020.1$ex[1]*(cnst$weeks_2020/52) + lifetable.qx(x,qx.females.2020,sex = 'F')$ex[1]*((52-cnst$weeks_2020)/52),2)
 
 #males
-round(ex.2020.1$ex[2]*(33/52) + lifetable.qx(x,qx.males.2020,sex = 'M')$ex[1]*((52-33)/52),2)
+round(ex.2020.1$ex[2]*(cnst$weeks_2020/52) + lifetable.qx(x,qx.males.2020,sex = 'M')$ex[1]*((52-cnst$weeks_2020)/52),2)
 
 
 ##### Scenario 2. deaths go back to below 10%
 #females
-round(ex.2020.1$ex[1]*(33/52) + lifetable.qx(x,qx.females.2020*.9,sex = 'F')$ex[1]*((52-33)/52),2)
+round(ex.2020.1$ex[1]*(cnst$weeks_2020/52) + lifetable.qx(x,qx.females.2020*.9,sex = 'F')$ex[1]*((52-cnst$weeks_2020)/52),2)
 
 #males
-round(ex.2020.1$ex[2]*(33/52) + lifetable.qx(x,qx.males.2020*.9,sex = 'M')$ex[1]*((52-33)/52),2)
+round(ex.2020.1$ex[2]*(cnst$weeks_2020/52) + lifetable.qx(x,qx.males.2020*.9,sex = 'M')$ex[1]*((52-cnst$weeks_2020)/52),2)
 
 .4*12
 
 ##### Scenario 2. deaths go back to above 10%
 #females
 #females
-round(ex.2020.1$ex[1]*(33/52) + lifetable.qx(x,qx.females.2020*1.1,sex = 'F')$ex[1]*((52-33)/52),2)
+round(ex.2020.1$ex[1]*(cnst$weeks_2020/52) + lifetable.qx(x,qx.females.2020*1.1,sex = 'F')$ex[1]*((52-cnst$weeks_2020)/52),2)
 
 #males
-round(ex.2020.1$ex[2]*(33/52) + lifetable.qx(x,qx.males.2020*1.1,sex = 'M')$ex[1]*((52-33)/52),2)
+round(ex.2020.1$ex[2]*(cnst$weeks_2020/52) + lifetable.qx(x,qx.males.2020*1.1,sex = 'M')$ex[1]*((52-cnst$weeks_2020)/52),2)
 
 (83.6-82.48)
 

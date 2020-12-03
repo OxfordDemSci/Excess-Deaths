@@ -16,7 +16,7 @@ cnst <- list()
 # starting year and weeks for excess deaths calculation
 cnst$jumpoff.year <- 2020
 cnst$jumpoff.week <- 10
-cnst$final.week <- 33
+cnst$final.week <- 47
 # number of simulations for predictive intervals
 cnst$n.sim <- 1e3
 

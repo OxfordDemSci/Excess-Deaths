@@ -62,9 +62,9 @@ paper.results[year == 2020 & sex != 'both']$ex - paper.results[year == 2019 & se
 
 paper.results[year == 2020 & sex != 'both']$sd - paper.results[year == 2019 & sex != 'both']$sd
 
-## percentage of poulation 85+ in females and males
+## percentage of population 85+ in females and males
 
-100*Deaths.Population.EW.2001.2020[year == 2020 & age >= 85, sum(mid.population), by =sex]$V1/
-  Deaths.Population.EW.2001.2020[year == 2020, sum(mid.population), by =sex]$V1
+100*Deaths.Population.EW.2001.2020[year == 2020 & age >= 85, sum(exposure), by =sex]$V1/
+  Deaths.Population.EW.2001.2020[year == 2020, sum(exposure), by =sex]$V1
 
 

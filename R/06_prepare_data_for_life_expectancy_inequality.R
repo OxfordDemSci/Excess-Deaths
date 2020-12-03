@@ -25,7 +25,9 @@ cnst <- list(
   path_population_by_age = 'Data/finalreftables2019.xlsx',
   # weekly death counts England and Wales from
   # https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales
-  path_weekly_deaths = 'Data/Update data/publishedweek472020.xlsx'
+  path_weekly_deaths = 'Data/Update data/publishedweek472020.xlsx',
+  # number of weeks under observation in 2020
+  weeks_2020 = 47
 )
 
 # Prepare life-tables ---------------------------------------------
@@ -86,12 +88,18 @@ population.2001.2019[,sex:= ifelse(sex == 1, 'males','females')]
 Population.EW.2001.2021 <-
   rbind(population.2001.2019,
         population.projections.2020[,c('year','sex','age','population')])
-Population.EW.2001.2021[,age.n:= cut(age,c(0,1,seq(5,90,5),Inf),include.lowest = T,right = F,labels = c(0,1,seq(5,90,5)))]
-Population.EW.2001.2021 <- Population.EW.2001.2021[,list(mid.population = sum(population)), by = list(year,sex,age.n)]
-names(Population.EW.2001.2021)[3]<-'age'
+Population.EW.2001.2021[,age.n:= cut(age,c(0,1,seq(5,90,5),Inf),
+                                     include.lowest = T,right = F,
+                                     labels = c(0,1,seq(5,90,5)))]
+Population.EW.2001.2021 <-
+  Population.EW.2001.2021[,list(mid.population = sum(population)),
+                          by = list(year,sex,age.n)]
+names(Population.EW.2001.2021)[3] <- 'age'
 Population.EW.2001.2021[,age:= as.numeric(as.character(age))]
 Population.EW.2001.2021[,year:= as.numeric(as.character(year))]
-Population.EW.2001.2021[,exposure := ifelse(year != 2020, mid.population, mid.population*(33/52))]
+Population.EW.2001.2021[,exposure := ifelse(year != 2020,
+                                            mid.population,
+                                            mid.population*(cnst$weeks_2020/52))]
 
 # Prepare death counts --------------------------------------------
 

@@ -8,6 +8,11 @@ library(mgcv)
 
 source('R/Figure_specifications.R')
 
+cnst <- list(
+  # number of weeks under observation in 2020
+  weeks_2020 = 47
+)
+
 dat <- list()
 fig <- list()
 tab <- list()
@@ -72,7 +77,7 @@ dat$tt <-
   )) %>%
   bind_rows(.id = 'cv_id') %>%
   mutate(cv_id = as.integer(cv_id)) %>%
-  filter(training == 'training' | (training == 'test' & iso.week <= 47)) %>%
+  filter(training == 'training' | (training == 'test' & iso.week <= cnst$weeks_2020)) %>%
   group_by(cv_id) %>%
   mutate(
     # weeks since start of series

@@ -1,6 +1,7 @@
 
 rm(list=ls())
 
+library(data.table)
 library(tidyverse)
 
 fig <- list()
@@ -89,22 +90,22 @@ fig_spec$ExportPDF(
 
 #Checks with offical lifetables and life expectancy function
 
-ggplot(EW.results,aes(x=year, y = e0))+
-  ggtitle('A) Life expectancy at birth')+
-  geom_ribbon(aes(x=year, y = e0, ymin = lower.e0, ymax = upper.e0, fill = sex), show.legend = F, alpha = 1/4)+
-  geom_path(aes(year, e0, color = sex), size = 1,show.legend = F, lineend = "round")+
-  geom_line(data = EW.results.2,aes(year,V1,color = sex))+
-  geom_point(data = life.tables.EW.1982.2018[x == 0 & upper.year %in% 2001:2018], aes(upper.year,ex,color = sex))+
-  scale_color_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
-  scale_fill_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
-  theme(
-    aspect.ratio = 1,
-    text = element_text(face = 1)
-  )+
-  labs(
-    x = NULL,
-    y = "Years"
-  )
+# ggplot(EW.results,aes(x=year, y = e0))+
+#   ggtitle('A) Life expectancy at birth')+
+#   geom_ribbon(aes(x=year, y = e0, ymin = lower.e0, ymax = upper.e0, fill = sex), show.legend = F, alpha = 1/4)+
+#   geom_path(aes(year, e0, color = sex), size = 1,show.legend = F, lineend = "round")+
+#   geom_line(data = EW.results.2,aes(year,V1,color = sex))+
+#   geom_point(data = life.tables.EW.1982.2018[x == 0 & upper.year %in% 2001:2018], aes(upper.year,ex,color = sex))+
+#   scale_color_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
+#   scale_fill_manual('Sex' , values = c("#72B2B4", "#B4A097",'#615652'),labels = c('Females','Males','Both'))+
+#   theme(
+#     aspect.ratio = 1,
+#     text = element_text(face = 1)
+#   )+
+#   labs(
+#     x = NULL,
+#     y = "Years"
+#   )
 
 
 
