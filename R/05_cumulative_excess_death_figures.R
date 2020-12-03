@@ -129,7 +129,7 @@ fig$figure2 <-
             paste0('Female\n', formatC(cum.excess.deaths.avg,
                                        format = 'd', big.mark = ',')),
           sex == 'm' & age.n == '85+' ~
-            paste0('Female\n', formatC(cum.excess.deaths.avg,
+            paste0('Male\n', formatC(cum.excess.deaths.avg,
                                        format = 'd', big.mark = ',')),
           age.n %in% c('under 15', '15 to 44') ~ '',
           TRUE ~ formatC(cum.excess.deaths.avg, format = 'd', big.mark = ',')
