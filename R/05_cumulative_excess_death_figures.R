@@ -73,7 +73,7 @@ fig$figure1 <-
     x = NULL,
     y = 'Cumulative excess deaths'
   ) +
-  fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 1.3, show_legend = FALSE)
+  fig_spec$MyGGplotTheme(hgrid = TRUE, vgrid = TRUE, scaler = 1.3, show_legend = FALSE)
 
 fig_spec$ExportPDF(
   fig$figure1, filename = 'Figure_1', path = 'Figures',
@@ -149,7 +149,7 @@ fig$figure2 <-
       filter(date == max(date))
   ) +
   fig_spec$MyGGplotTheme(
-    hgrid = TRUE,
+    hgrid = TRUE, vgrid = TRUE,
     scaler = 1.3,
     show_legend = FALSE
   ) +
