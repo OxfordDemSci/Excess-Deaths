@@ -52,7 +52,7 @@ fig$figure1 <-
     aes(
       x = date, y = avg,
       label = paste0(ifelse(sex == 'f', 'Female\n', 'Male\n'),
-                     formatC(avg, format = 'd', big.mark = ',')),
+                     formatC(round(avg), format = 'd', big.mark = ',')),
       color = sex),
     hjust = 0, vjust = 1,
     nudge_x = 1, size = 3,
@@ -126,13 +126,14 @@ fig$figure2 <-
       label =
         case_when(
           sex == 'f' & age.n == '85+' ~
-            paste0('Female\n', formatC(cum.excess.deaths.avg,
+            paste0('Female\n', formatC(round(cum.excess.deaths.avg),
                                        format = 'd', big.mark = ',')),
           sex == 'm' & age.n == '85+' ~
-            paste0('Male\n', formatC(cum.excess.deaths.avg,
-                                       format = 'd', big.mark = ',')),
+            paste0('Male\n', formatC(round(cum.excess.deaths.avg),
+                                     format = 'd', big.mark = ',')),
           age.n %in% c('under 15', '15 to 44') ~ '',
-          TRUE ~ formatC(cum.excess.deaths.avg, format = 'd', big.mark = ',')
+          TRUE ~ formatC(round(cum.excess.deaths.avg),
+                         format = 'd', big.mark = ',')
         ),
       color = sex,
     ),
