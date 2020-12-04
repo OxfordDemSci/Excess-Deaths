@@ -7,26 +7,19 @@ set.seed(1987)
 library(data.table)
 library(mgcv)
 
-#run 1_Weekly-Update.R to update from excel file from ONS when needed
-
 models <- list()
 dat <- list()
 fig <- list()
 
 source('R/Figure_specifications.R')
+source('R/00-global_constants.R')
 
 # Constants -------------------------------------------------------
 
-cnst <- list()
-# start of data series
-cnst$initial.year <- 2010
-# period to be forecast
-cnst$jumpoff.year <- 2020
-cnst$jumpoff.week <- 10
-# starting week of flu year (counted from 0)
-cnst$fluyear.week.start <- 27
-# period for average mortality rate model
-cnst$avg.mortality.period <- 2015:2019
+cnst <- list(
+  # period for average mortality rate model
+  avg.mortality.period = 2015:2019
+)
 
 # Data preparation ------------------------------------------------
 
@@ -35,8 +28,8 @@ load('Data/weekly_deaths_enwa.Rdata')
 Data.dt[,
         # create variable for training period
         training := ifelse(
-          year < cnst$jumpoff.year |
-            (year == cnst$jumpoff.year & iso.week < cnst$jumpoff.week),
+          year < glob$jumpoff_year |
+            (year == glob$jumpoff_year & iso.week < glob$jumpoff_week),
           TRUE, FALSE
         )]
 
@@ -407,7 +400,7 @@ fig_spec$ExportPNG(
 
 fig$obs.vs.expected.males.long <-
   PlotObservedVsExpectedDeaths(
-  Deaths.UK.for.plot[sex == 'm' & year >= cnst$jumpoff.year-5],
+  Deaths.UK.for.plot[sex == 'm' & year >= (glob$jumpoff_year-5)],
   date_breaks = '1 year',
   date_labels = '%Y'
 ) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
@@ -426,7 +419,7 @@ fig_spec$ExportPNG(
 
 fig$obs.vs.expected.females.long <-
   PlotObservedVsExpectedDeaths(
-    Deaths.UK.for.plot[sex == 'f' & year >= cnst$jumpoff.year-5],
+    Deaths.UK.for.plot[sex == 'f' & year >= (glob$jumpoff_year-5)],
     date_breaks = '1 year',
     date_labels = '%Y'
   ) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)

@@ -26,7 +26,7 @@ fig$figure3 <-
       ymax = upper.ex,
       fill = sex
     ),
-    alpha = 0.2
+    alpha = 0.3
   ) +
   geom_line(
     aes(x = year, y = ex, color = sex)
@@ -37,7 +37,7 @@ fig$figure3 <-
   ) +
   #scale_y_continuous(labels = scales::label_comma()) +
   scale_color_manual(values = c("#1E8B8F","#806152")) +
-  scale_fill_manual(values = fig_spec$sex_colors) +
+  scale_fill_manual(values = c("#1E8B8F","#806152")) +
   labs(
     x = NULL,
     y = 'Years'
@@ -60,7 +60,7 @@ fig$figure4 <-
       ymax = upper.ex.1,
       fill = sex
     ),
-    alpha = 0.2
+    alpha = 0.3
   ) +
   geom_line(
     aes(x = year, y = sd, color = sex)
@@ -71,7 +71,7 @@ fig$figure4 <-
   ) +
   #scale_y_continuous(labels = scales::label_comma()) +
   scale_color_manual(values = c("#1E8B8F","#806152")) +
-  scale_fill_manual(values = fig_spec$sex_colors) +
+  scale_fill_manual(values = c("#1E8B8F","#806152")) +
   labs(
     x = NULL,
     y = NULL

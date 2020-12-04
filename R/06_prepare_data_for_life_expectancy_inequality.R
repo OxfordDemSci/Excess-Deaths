@@ -25,12 +25,10 @@ cnst <- list(
   path_population_by_age = 'Data/finalreftables2019.xlsx',
   # weekly death counts England and Wales from
   # https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales
-  path_weekly_deaths = 'Data/Update data/publishedweek472020.xlsx',
-  # number of weeks under observation in 2020
-  observed_weeks_2020 = 47,
-  # total number of weeks in iso-week-year 2020
-  total_weeks_2020 = 53
+  path_weekly_deaths = 'Data/Update data/publishedweek472020.xlsx'
 )
+
+source('R/00-global_constants.R')
 
 # Prepare life-tables ---------------------------------------------
 
@@ -99,9 +97,11 @@ Population.EW.2001.2021 <-
 names(Population.EW.2001.2021)[3] <- 'age'
 Population.EW.2001.2021[,age:= as.numeric(as.character(age))]
 Population.EW.2001.2021[,year:= as.numeric(as.character(year))]
-Population.EW.2001.2021[,exposure := ifelse(year != 2020,
-                                            mid.population,
-                                            mid.population*(cnst$observed_weeks_2020/cnst$total_weeks_2020))]
+Population.EW.2001.2021[,exposure := ifelse(
+  year != 2020,
+  mid.population,
+  mid.population*(glob$observed_weeks_2020/glob$total_weeks_2020))
+]
 
 # Prepare death counts --------------------------------------------
 

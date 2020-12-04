@@ -7,33 +7,30 @@ set.seed(1987)
 library(data.table)
 library(ggplot2)
 
+source('R/00-global_constants.R')
+
 dat <- list()
 tab <- list()
 
 # Constants -------------------------------------------------------
 
-cnst <- list()
-# starting year and weeks for excess deaths calculation
-cnst$jumpoff.year <- 2020
-cnst$jumpoff.week <- 10
-cnst$final.week <- 47
-# number of simulations for predictive intervals
-cnst$n.sim <- 1e3
-
-cnst$model.labels <-
-  c(
-    `gam.nb` = 'GAM Negative Binomial',
-    `gam.poisson` = 'GAM Poisson',
-    `glm.serfling` = 'GLM Poisson (Serfling)',
-    `avg.mortality` = 'Average mortality'
-  )
-
-cnst$sex.labels <-
-  c(
-    `m` = 'Male',
-    `f` = 'Female',
-    `t` = 'Total'
-  )
+cnst <- list(
+  # number of simulations for predictive intervals
+  n.sim = 1e3,
+  model.labels =
+    c(
+      `gam.nb` = 'GAM Negative Binomial',
+      `gam.poisson` = 'GAM Poisson',
+      `glm.serfling` = 'GLM Poisson (Serfling)',
+      `avg.mortality` = 'Average mortality'
+    ),
+  sex.labels =
+    c(
+      `m` = 'Male',
+      `f` = 'Female',
+      `t` = 'Total'
+    )
+)
 
 # Load data -------------------------------------------------------
 
@@ -44,8 +41,8 @@ load('Data/predicted_weekly_deaths_enwa.Rdata')
 # subset to excess deaths date range
 dat$deaths.subset <-
   copy(Deaths.UK[
-    year %in% cnst$jumpoff.year &
-      week >= cnst$jumpoff.week
+    year %in% glob$jumpoff_year &
+      week >= glob$jumpoff_week
   ])
 
 # add data ID, timeseries ID
@@ -146,7 +143,7 @@ dat$results$excess.deaths.week.sex <-
 # Total excess deaths end of period both sexes
 dat$results$excess.deaths.total <-
   dat$simulations[
-    week == cnst$final.week,
+    week == glob$observed_weeks_2020,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over sex and age is implicit here
   by = .(simulation.id, model)][
@@ -162,7 +159,7 @@ dat$results$excess.deaths.total <-
 # Total excess deaths end of period, by sex
 dat$results$excess.deaths.sex <-
   dat$simulations[
-  week == cnst$final.week,
+  week == glob$observed_weeks_2020,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over age is implicit here
   by = .(simulation.id, model, sex)][
@@ -178,7 +175,7 @@ dat$results$excess.deaths.sex <-
 # Total excess deaths end of period both sexes, by age
 dat$results$excess.deaths.age <-
   dat$simulations[
-    week == cnst$final.week,
+    week == glob$observed_weeks_2020,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   # summation over sex is implicit here
   by = .(simulation.id, model, age.n)][
@@ -194,7 +191,7 @@ dat$results$excess.deaths.age <-
 # Total excess deaths end of period, by age and sex
 dat$results$excess.deaths.age.sex <-
   dat$simulations[
-    week == cnst$final.week,
+    week == glob$observed_weeks_2020,
   .(total.excess.deaths = sum(cum.excess.deaths)),
   by = .(simulation.id, model, age.n, sex)][
     ,
@@ -209,7 +206,7 @@ dat$results$excess.deaths.age.sex <-
 # Percent above expected total deaths end of period
 dat$results$pct.excess.total <-
   dat$simulations[
-    week == cnst$final.week,
+    week == glob$observed_weeks_2020,
   .(percent.above =
       (sum(cum.observed.deaths)/sum(cum.simulated.deaths)-1)*100),
   # summation over sex and age is implicit here
@@ -227,7 +224,7 @@ dat$results$pct.excess.total <-
 # percent above expected total deaths end of period by age group
 dat$results$pct.excess.age <-
   dat$simulations[
-    week == cnst$final.week,
+    week == glob$observed_weeks_2020,
   .(percent.above =
       (sum(cum.observed.deaths)/sum(cum.simulated.deaths)-1)*100),
   by = .(simulation.id, model,age.n)][
@@ -243,7 +240,7 @@ dat$results$pct.excess.age <-
 # percent above expected total deaths end of period, by sex
 dat$results$pct.excess.sex <-
   dat$simulations[
-    week == cnst$final.week,
+    week == glob$observed_weeks_2020,
   .(percent.above =
       (sum(cum.observed.deaths)/sum(cum.simulated.deaths)-1)*100),
   by = .(simulation.id, model, sex)][

@@ -7,6 +7,7 @@ library(tidyverse)
 library(mgcv)
 
 source('R/Figure_specifications.R')
+source('R/00-global_constants.R')
 
 cnst <- list(
   # number of weeks under observation in 2020
@@ -77,7 +78,7 @@ dat$tt <-
   )) %>%
   bind_rows(.id = 'cv_id') %>%
   mutate(cv_id = as.integer(cv_id)) %>%
-  filter(training == 'training' | (training == 'test' & iso.week <= cnst$weeks_2020)) %>%
+  filter(training == 'training' | (training == 'test' & iso.week <= glob$observed_weeks_2020)) %>%
   group_by(cv_id) %>%
   mutate(
     # weeks since start of series

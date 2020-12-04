@@ -2,14 +2,9 @@ library(data.table)
 
 rm(list=ls())
 
-cnst <- list(
-  # number of weeks under observation in 2020
-  observed_weeks_2020 = 47,
-  # total number of weeks in iso-week-year 2020
-  total_weeks_2020 = 53
-)
-
 source('R/LifeTableFUN.R')
+source('R/00-global_constants.R')
+
 #baseline qx based on https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/lifeexpectancies/datasets/lifetablesprincipalprojectionenglandandwales
 
 qx.males.2020 <- c(0.00378,0.00036,0.00017,0.00009,0.00008,0.00008,0.00007
@@ -63,32 +58,32 @@ round(lifetable.qx(x,qx.males.2020,sex = 'M')$ex[1],2)
 ##### Scenario 1. deaths go back to baseline
 #females
 round(
-  ex.2020.1$ex[1]*(cnst$observed_weeks_2020/cnst$total_weeks_2020) +
+  ex.2020.1$ex[1]*(glob$observed_weeks_2020/glob$total_weeks_2020) +
     lifetable.qx(x,qx.females.2020,sex = 'F')$ex[1]*
-    ((cnst$total_weeks_2020-cnst$observed_weeks_2020)/cnst$total_weeks_2020),
+    ((glob$total_weeks_2020-glob$observed_weeks_2020)/glob$total_weeks_2020),
   2)
 
 #males
 round(
-  ex.2020.1$ex[2]*(cnst$observed_weeks_2020/cnst$total_weeks_2020) +
+  ex.2020.1$ex[2]*(glob$observed_weeks_2020/glob$total_weeks_2020) +
     lifetable.qx(x,qx.males.2020,sex = 'M')$ex[1]*
-    ((cnst$total_weeks_2020-cnst$observed_weeks_2020)/cnst$total_weeks_2020),
+    ((glob$total_weeks_2020-glob$observed_weeks_2020)/glob$total_weeks_2020),
   2)
 
 
 ##### Scenario 2. deaths go back to below 10%
 #females
 round(
-  ex.2020.1$ex[1]*(cnst$observed_weeks_2020/cnst$total_weeks_2020) +
+  ex.2020.1$ex[1]*(glob$observed_weeks_2020/glob$total_weeks_2020) +
     lifetable.qx(x,qx.females.2020*.9,sex = 'F')$ex[1]*
-    ((cnst$total_weeks_2020-cnst$observed_weeks_2020)/cnst$total_weeks_2020),
+    ((glob$total_weeks_2020-glob$observed_weeks_2020)/glob$total_weeks_2020),
   2)
 
 #males
 round(
-  ex.2020.1$ex[2]*(cnst$observed_weeks_2020/cnst$total_weeks_2020) +
+  ex.2020.1$ex[2]*(glob$observed_weeks_2020/glob$total_weeks_2020) +
     lifetable.qx(x,qx.males.2020*.9,sex = 'M')$ex[1]*
-    ((cnst$total_weeks_2020-cnst$observed_weeks_2020)/cnst$total_weeks_2020),
+    ((glob$total_weeks_2020-glob$observed_weeks_2020)/glob$total_weeks_2020),
   2)
 
 #.4*12
@@ -97,16 +92,16 @@ round(
 #females
 #females
 round(
-  ex.2020.1$ex[1]*(cnst$observed_weeks_2020/cnst$total_weeks_2020) +
+  ex.2020.1$ex[1]*(glob$observed_weeks_2020/glob$total_weeks_2020) +
     lifetable.qx(x,qx.females.2020*1.1,sex = 'F')$ex[1]*
-    ((cnst$total_weeks_2020-cnst$observed_weeks_2020)/cnst$total_weeks_2020),
+    ((glob$total_weeks_2020-glob$observed_weeks_2020)/glob$total_weeks_2020),
   2)
 
 #males
 round(
-  ex.2020.1$ex[2]*(cnst$observed_weeks_2020/cnst$total_weeks_2020) +
+  ex.2020.1$ex[2]*(glob$observed_weeks_2020/glob$total_weeks_2020) +
     lifetable.qx(x,qx.males.2020*1.1,sex = 'M')$ex[1]*
-    ((cnst$total_weeks_2020-cnst$observed_weeks_2020)/cnst$total_weeks_2020),
+    ((glob$total_weeks_2020-glob$observed_weeks_2020)/glob$total_weeks_2020),
   2)
 
 #(83.6-82.48)
