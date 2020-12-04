@@ -109,8 +109,8 @@ fig$figure2 <-
   ) +
   facet_wrap(~age.n) +
   scale_x_date(
-    limits = as.Date(c('2020-03-01', '2020-12-01')),
-    date_breaks = '1 month',
+    limits = as.Date(c('2020-03-01', '2021-01-01')),
+    date_breaks = '2 months',
     date_labels = '%b'
   ) +
   scale_y_continuous(labels = scales::label_comma()) +
