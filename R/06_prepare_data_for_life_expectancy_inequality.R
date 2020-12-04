@@ -27,7 +27,9 @@ cnst <- list(
   # https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales
   path_weekly_deaths = 'Data/Update data/publishedweek472020.xlsx',
   # number of weeks under observation in 2020
-  weeks_2020 = 47
+  observed_weeks_2020 = 47,
+  # total number of weeks in iso-week-year 2020
+  total_weeks_2020 = 53
 )
 
 # Prepare life-tables ---------------------------------------------
@@ -99,7 +101,7 @@ Population.EW.2001.2021[,age:= as.numeric(as.character(age))]
 Population.EW.2001.2021[,year:= as.numeric(as.character(year))]
 Population.EW.2001.2021[,exposure := ifelse(year != 2020,
                                             mid.population,
-                                            mid.population*(cnst$weeks_2020/52))]
+                                            mid.population*(cnst$observed_weeks_2020/cnst$total_weeks_2020))]
 
 # Prepare death counts --------------------------------------------
 
