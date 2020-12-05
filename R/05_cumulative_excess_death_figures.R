@@ -32,6 +32,7 @@ fig$figure1 <-
   results$excess.deaths.week.sex %>%
   filter(model == 'gam.nb') %>%
   ggplot() +
+  geom_hline(yintercept = 0) +
   geom_ribbon(
     aes(
       x = date,
@@ -63,7 +64,7 @@ fig$figure1 <-
       filter(date == max(date))
   ) +
   scale_x_date(
-    limits = as.Date(c('2020-03-01', '2020-12-01')),
+    limits = as.Date(c('2020-03-01', '2020-12-10')),
     date_breaks = '1 month', date_labels = '%b'
   ) +
   scale_y_continuous(labels = scales::label_comma()) +
@@ -73,7 +74,11 @@ fig$figure1 <-
     x = NULL,
     y = 'Cumulative excess deaths'
   ) +
-  fig_spec$MyGGplotTheme(hgrid = TRUE, vgrid = TRUE, scaler = 1.3, show_legend = FALSE)
+  coord_cartesian(expand = FALSE, clip = 'off') +
+  fig_spec$MyGGplotTheme(
+    grid = 'xy', scaler = 1.3, show_legend = FALSE,
+    axis = 'none'
+  )
 
 fig_spec$ExportPDF(
   fig$figure1, filename = 'Figure_1', path = 'Figures',
@@ -91,6 +96,7 @@ fig$figure2 <-
   filter(model == 'gam.nb') %>%
   mutate(age.n = factor(age.n, cnst$age.labels, names(cnst$age.labels))) %>%
   ggplot() +
+  geom_hline(yintercept = 0) +
   geom_ribbon(
     aes(
       x = date,
@@ -109,8 +115,8 @@ fig$figure2 <-
   ) +
   facet_wrap(~age.n) +
   scale_x_date(
-    limits = as.Date(c('2020-03-01', '2021-01-01')),
-    date_breaks = '2 months',
+    limits = as.Date(c('2020-03-01', '2020-12-31')),
+    date_breaks = '2 months', date_minor_breaks = '1 month',
     date_labels = '%b'
   ) +
   scale_y_continuous(labels = scales::label_comma()) +
@@ -149,12 +155,11 @@ fig$figure2 <-
       group_by(sex, age.n) %>%
       filter(date == max(date))
   ) +
+  coord_cartesian(expand = FALSE, clip = 'off') +
   fig_spec$MyGGplotTheme(
-    hgrid = TRUE, vgrid = TRUE,
-    scaler = 1.3,
-    show_legend = FALSE
-  ) +
-  coord_cartesian(clip = 'off')
+    grid = 'xy', minor_grid = 'x', scaler = 1.3, show_legend = FALSE,
+    axis = 'none'
+  )
 
 fig_spec$ExportPDF(
   fig$figure2, filename = 'Figure_2', path = 'Figures',

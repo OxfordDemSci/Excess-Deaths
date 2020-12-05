@@ -9,10 +9,10 @@ fig_spec$MyGGplotTheme <-
     size = 8,
     family = 'sans',
     scaler = 1,
-    no_axes = FALSE,
+    axis = 'x',
     panel_border = FALSE,
-    hgrid = FALSE,
-    vgrid = FALSE,
+    grid = 'y',
+    minor_grid = '',
     show_legend = TRUE,
     ar = NA
   ) {
@@ -22,7 +22,7 @@ fig_spec$MyGGplotTheme <-
     base_linesize = 0.3*scaler
 
     list(
-      theme_classic(base_size = size_med, base_family = family),
+      theme_minimal(base_size = size_med, base_family = family),
       theme(
         # basic
         text = element_text(color = 'black'),
@@ -30,7 +30,7 @@ fig_spec$MyGGplotTheme <-
         # axis
         #axis.line.y = element_blank(),
         axis.title = element_text(size = size_med, face = 'bold'),
-        axis.ticks = element_line(size = rel(0.5), color = 'black'),
+        #axis.ticks = element_line(size = rel(0.5), color = 'black'),
         axis.text = element_text(size = size_med, color = 'black'),
         # strips
         strip.text = element_text(color = 'black', size = size_med),
@@ -41,15 +41,37 @@ fig_spec$MyGGplotTheme <-
         plot.caption = element_text(color = 'black', size = size_sml, face = 'plain'),
         plot.background = element_blank(),
         panel.background = element_blank(),
-        plot.margin = unit(c(1, 0.1, 0.5, 0.5), units = 'mm'),
+        #plot.margin = unit(c(1, 0.1, 0.5, 0.5), units = 'mm'),
+        # grid
+        panel.grid = element_blank()
       ),
-      if (isTRUE(hgrid)) {
+      if (identical(grid, 'y')) {
         theme(panel.grid.major.y =
-                element_line(linetype = 3, color = 'grey80'))
+                element_line(size = base_linesize, linetype = 3, color = 'grey80'))
       },
-      if (isTRUE(vgrid)) {
+      if (identical(grid, 'x')) {
         theme(panel.grid.major.x =
-                element_line(linetype = 3, color = 'grey80'))
+                element_line(size = base_linesize, linetype = 3, color = 'grey80'))
+      },
+      if (identical(grid, 'xy') | identical(grid, 'yx')) {
+        theme(panel.grid.major.y =
+                element_line(size = base_linesize, linetype = 3, color = 'grey80'),
+              panel.grid.major.x =
+                element_line(size = base_linesize, linetype = 3, color = 'grey80'))
+      },
+      if (identical(minor_grid, 'y')) {
+        theme(panel.grid.minor.y =
+                element_line(size = base_linesize, linetype = 3, color = 'grey80'))
+      },
+      if (identical(minor_grid, 'x')) {
+        theme(panel.grid.minor.x =
+                element_line(size = base_linesize, linetype = 3, color = 'grey80'))
+      },
+      if (identical(minor_grid, 'xy') | identical(grid, 'yx')) {
+        theme(panel.grid.minor.y =
+                element_line(size = base_linesize, linetype = 3, color = 'grey80'),
+              panel.grid.minor.x =
+                element_line(size = base_linesize, linetype = 3, color = 'grey80'))
       },
       if (isTRUE(panel_border)) {
         theme(
@@ -60,9 +82,19 @@ fig_spec$MyGGplotTheme <-
       if (!isTRUE(show_legend)) {
         theme(legend.position = 'none')
       },
-      if (isTRUE(no_axes)) {
+      if (axis == 'x') {
         theme(
-          axis.line = element_blank()
+          axis.line.x = element_line(linetype = 1, color = 'black')
+        )
+      },
+      if (axis == 'y') {
+        theme(
+          axis.line.y = element_line(linetype = 1, color = 'black')
+        )
+      },
+      if (axis == 'xy') {
+        theme(
+          axis.line = element_line(linetype = 1, color = 'black')
         )
       },
       if (!is.na(ar)) {
@@ -72,6 +104,7 @@ fig_spec$MyGGplotTheme <-
       }
     )
   }
+
 
 # Dimensions ------------------------------------------------------
 

@@ -35,7 +35,6 @@ fig$figure3 <-
     aes(x = year, y = ex, color = sex),
     size = 1
   ) +
-  #scale_y_continuous(labels = scales::label_comma()) +
   scale_color_manual(values = c("#1E8B8F","#806152")) +
   scale_fill_manual(values = c("#1E8B8F","#806152")) +
   labs(
@@ -47,7 +46,10 @@ fig$figure3 <-
            angle = c(30,38),
            color = c("#1E8B8F","#806152"),
            size = 6.5, hjust = 0, vjust = 1) +
-  fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 1.3, show_legend = FALSE)
+  fig_spec$MyGGplotTheme(
+    grid = 'xy', scaler = 1.3, show_legend = FALSE,
+    axis = 'x'
+  )
 
 fig$figure4 <-
   fig.data  %>%
@@ -76,7 +78,10 @@ fig$figure4 <-
     x = NULL,
     y = NULL
   ) +
-  fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 1.3, show_legend = FALSE)
+  fig_spec$MyGGplotTheme(
+    grid = 'xy', scaler = 1.3, show_legend = FALSE,
+    axis = 'x'
+  )
 
 library(patchwork)
 
