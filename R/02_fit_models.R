@@ -363,9 +363,11 @@ Deaths.UK.for.plot[,`:=`(
 fig$obs.vs.expected.males.short <-
   PlotObservedVsExpectedDeaths(
   Deaths.UK.for.plot[sex == 'm' & date >= '2019-06-01'],
-  date_breaks = '3 months',
+  date_breaks = '4 months',
   date_labels = '%b %y'
-) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
+) +
+  fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8) +
+  coord_cartesian(expand = FALSE)
 fig_spec$ExportPDF(
   fig$obs.vs.expected.males.short,
   'obs_vs_expected_males_short',
@@ -382,9 +384,11 @@ fig_spec$ExportPNG(
 fig$obs.vs.expected.females.short <-
   PlotObservedVsExpectedDeaths(
   Deaths.UK.for.plot[sex == 'f' & date >= '2019-06-01'],
-  date_breaks = '3 months',
+  date_breaks = '4 months',
   date_labels = '%b %y'
-) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
+) +
+  fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8) +
+  coord_cartesian(expand = FALSE)
 fig_spec$ExportPDF(
   fig$obs.vs.expected.females.short,
   'obs_vs_expected_females_short',
@@ -403,7 +407,8 @@ fig$obs.vs.expected.males.long <-
   Deaths.UK.for.plot[sex == 'm' & year >= (glob$jumpoff_year-5)],
   date_breaks = '1 year',
   date_labels = '%Y'
-) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
+) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8) +
+  coord_cartesian(expand = FALSE)
 fig_spec$ExportPDF(
   fig$obs.vs.expected.males.long,
   'obs_vs_expected_males_long',
@@ -422,7 +427,9 @@ fig$obs.vs.expected.females.long <-
     Deaths.UK.for.plot[sex == 'f' & year >= (glob$jumpoff_year-5)],
     date_breaks = '1 year',
     date_labels = '%Y'
-  ) + fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8)
+  ) +
+  fig_spec$MyGGplotTheme(hgrid = TRUE, scaler = 0.8) +
+  coord_cartesian(expand = FALSE)
 fig_spec$ExportPDF(
   fig$obs.vs.expected.females.long,
   'obs_vs_expected_females_long',

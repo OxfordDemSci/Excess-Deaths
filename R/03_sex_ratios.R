@@ -28,12 +28,14 @@ Deaths.UK[,`:=`(
 Sex.ratio <- Deaths.UK[model %in% 'Poisson GAM', list(sex.ratio.mx = observed.mx[sex == 'm']/observed.mx[sex == 'f']), by = list(model,age.n,year,week,date,time)]
 
 
-ggplot(Sex.ratio[age.n != '0 to 14' & year %in% 2020]) +
+mortality_sex_ratio <-
+  ggplot(Sex.ratio[age.n != '0 to 14' & year %in% 2020]) +
   geom_line(aes(x = date, y = sex.ratio.mx,group= age.n),size = 1)+
-  geom_hline(yintercept = 1,lty = 2)+
-  facet_wrap('age.n',nrow = 1)+
+  geom_hline(yintercept = 1)+
+  facet_wrap('age.n', ncol = 1)+
   scale_y_continuous(breaks = c(1,1.2,1.5,1.8,2.1))+
-  fig_spec$MyGGplotTheme() +
+  scale_x_date(date_breaks = '1 months', date_labels = '%b') +
+  fig_spec$MyGGplotTheme(ar = 0.2, no_axes = TRUE, hgrid = TRUE) +
   guides(color = 'none', fill = 'none')+
   # labels
   labs(
@@ -41,4 +43,12 @@ ggplot(Sex.ratio[age.n != '0 to 14' & year %in% 2020]) +
     y = 'Sex ratio of the death rate'
   )
 
+fig_spec$ExportPDF(
+  mortality_sex_ratio, filename = 'mortality_sex_ratio', path = 'Figures',
+  width = fig_spec$width, height = fig_spec$width, scale = 1.21
+)
+fig_spec$ExportPNG(
+  mortality_sex_ratio, filename = 'mortality_sex_ratio', path = 'Figures',
+  width = fig_spec$width, height = fig_spec$width, scale = 1.21
+)
 

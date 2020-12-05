@@ -82,9 +82,12 @@ library(patchwork)
 
 fig_spec$ExportPDF(
   fig$figure3+fig$figure4, filename = 'Figure_3', path = 'Figures',
-  width = fig_spec$width, height = 0.6*fig_spec$width
+  width = fig_spec$width, height = 0.6*fig_spec$width, scale = 1.21
 )
-
+fig_spec$ExportPNG(
+  fig$figure3+fig$figure4, filename = 'Figure_3', path = 'Figures',
+  width = fig_spec$width, height = 0.6*fig_spec$width, scale = 1.21
+)
 
 
 
