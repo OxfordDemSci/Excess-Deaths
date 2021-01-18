@@ -2,3 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+*.pdf
+*.docx
+*.gdoc
+Manuscript/JECH Submission 2/equations/equations.Rmd
+Manuscript/Submission BMJ/Table 2 Supplement.xlsx
