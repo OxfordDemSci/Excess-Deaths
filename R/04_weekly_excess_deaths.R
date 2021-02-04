@@ -363,3 +363,51 @@ tab$supp_tab2 <-
   autofit(add_w = 0, add_h = 0)
 print(tab$supp_tab2, preview = 'docx')
 save_as_docx(tab$supp_tab2, path = 'Tables/excess_deaths_by_age_sex.docx')
+
+
+### some results for press release
+pr <- dat$results$excess.deaths.complete
+pr <- pr[model %in% 'avg.mortality']
+pr <- pr[,list(observed.deaths = sum(observed.deaths), expected.deaths = sum(expected.deaths)),
+         by = list(year,week,date)]
+
+#Excess deaths 20 Nov to 31 December
+
+#R: From week 47 (starting November 16) to week 53 (starting December 28) there were:
+
+sum(pr[week %in% 47:53]$observed.deaths) - sum(pr[week %in% 47:53]$expected.deaths)
+
+#how many people can normally be expected to die in December and how many more people died in Dec 2020 compared to 2019?
+
+#R: expected in december
+sum(pr[week %in% 49:53]$expected.deaths)
+
+#R: observed in december
+sum(pr[week %in% 49:53]$observed.deaths)
+
+#Boris announced the 2nd wave 18 sept, so would be good to get data for total number of people
+#who have died during the 2nd wave up to Dec 31st or beyond  (from all causes) compared to deaths from all causes during the 1st wave.
+
+#R: expected in second wave
+sum(pr[week %in% 39:53]$expected.deaths)
+
+#R: observed in seconf wave
+sum(pr[week %in% 39:53]$observed.deaths)
+
+#e 2nd wave up to Dec 31st or beyond  (from all causes) compared to deaths from all causes during the 1st wave.
+
+#R: expected in first wave
+sum(pr[week %in% 10:24]$expected.deaths)
+
+#R: observed in first wave
+sum(pr[week %in% 10:24]$observed.deaths)
+
+
+#R: expected in 2020
+sum(pr[week %in% 10:53]$expected.deaths) - sum(pr[week %in% 10:53]$observed.deaths)
+
+#R: observed in 2020
+sum(pr[week %in% 10:53]$observed.deaths)
+
+
+

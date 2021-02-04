@@ -11,7 +11,7 @@ glob <- list(
   jumpoff_year = 2020,
   jumpoff_week = 10,
   # number of weeks under observation in 2020
-  observed_weeks_2020 = 47,
+  observed_weeks_2020 = 53,
   # total number of weeks in iso-week-year 2020
   total_weeks_2020 = 53
 )

@@ -25,7 +25,7 @@ cnst <- list(
   path_population_by_age = 'Data/finalreftables2019.xlsx',
   # weekly death counts England and Wales from
   # https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales
-  path_weekly_deaths = 'Data/Update data/publishedweek472020.xlsx'
+  path_weekly_deaths = 'Data/Update data/publishedweek532020.xlsx'
 )
 
 source('R/00-global_constants.R')
@@ -154,6 +154,8 @@ death.counts.2020 <- data.table(melt(death.counts.2020,
 # aggregate over weeks
 death.counts.2020 <- death.counts.2020[,list(deaths = sum(deaths,na.rm = T),
                                              year = 2020), by = .(age,sex)]
+
+sum(death.counts.2020$deaths)
 # rbind with other years
 Deaths.EW.1963.2020 <- rbind(death.counts.1963.2019,
                              death.counts.2020[,c('year','sex','age','deaths')])
